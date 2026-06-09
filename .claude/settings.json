@@ -1,5 +1,51 @@
 {
   "enabledPlugins": {
     "harness@harness-marketplace": true
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "costflow hook",
+            "commandWindows": "costflow hook"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "costflow hook",
+            "commandWindows": "costflow hook"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "costflow hook",
+            "commandWindows": "costflow hook"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "costflow hook",
+            "commandWindows": "costflow hook"
+          }
+        ]
+      }
+    ]
   }
 }

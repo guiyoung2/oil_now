@@ -1,0 +1,44 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Users\\귀영\\Desktop\\ReactProject\\costflow\\packages\\cli\\dist\\index.js\" hook --agent codex",
+            "commandWindows": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Users\\귀영\\Desktop\\ReactProject\\costflow\\packages\\cli\\dist\\index.js\" hook --agent codex"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "costflow hook --agent codex",
+            "commandWindows": "costflow hook --agent codex"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Users\\귀영\\Desktop\\ReactProject\\costflow\\packages\\cli\\dist\\index.js\" hook --agent codex",
+            "commandWindows": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Users\\귀영\\Desktop\\ReactProject\\costflow\\packages\\cli\\dist\\index.js\" hook --agent codex"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "costflow hook --agent codex",
+            "commandWindows": "costflow hook --agent codex"
+          }
+        ]
+      }
+    ]
+  }
+}
