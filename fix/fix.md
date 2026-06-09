@@ -9,8 +9,8 @@
 
 | # | 유형 | 발견 단계 | 심각도 | 상태 | 메모 |
 |---|------|----------|-------|------|------|
-| 1 | `schema` | 계획 감리 | minor | 미결 | `price_snapshots.fuel_type` 컬럼 타입 미정 — Opinet 유종코드가 숫자(INT)인지 문자열(TEXT)인지 공식 문서 확인 후 결정. Step 2 시작 전 확인 필수. |
-| 2 | `schema` | 계획 감리 | minor | 미결 | `stations.updated_at` 자동 갱신 트리거 필요 여부 — upsert 시 자동 갱신이 필요하면 Postgres 트리거 추가, Supabase moddatetime 확장 활용 가능. |
+| 1 | `schema` | 계획 감리 | minor | ✅ 결정 | `price_snapshots.fuel_type` → `TEXT` 타입 채택. API 확인 전 안전한 선택. 숫자 코드 확인 시 마이그레이션으로 변경. |
+| 2 | `schema` | 계획 감리 | minor | ✅ 결정 | `stations.updated_at` 자동 갱신 트리거 추가. Supabase `moddatetime` 확장 사용. |
 | 3 | `pipeline` | 계획 감리 | major | 미결 | Opinet 정확한 엔드포인트 / 유종코드 미확인 — Step 3 구현 전 오피넷 오픈API 공식 문서 확인 필수. 엔드포인트·파라미터·응답 구조 확인. |
 | 4 | `pipeline` | 계획 감리 | major | 미결 | 전국 수집 전략 미정 — 1.1만 주유소 일괄 수집 시 Edge Function 실행시간 한도(기본 150초) 초과 가능. 지역코드 순회 배치 분할 전략 수립 필요. Step 3 설계 단계에서 결정. |
 | 5 | `ui` | 계획 감리 | minor | 미결 | 카카오맵 SDK 비동기 로드 처리 — 스크립트 태그 삽입 시 React 생명주기와 충돌 가능. 동적 import 또는 useEffect 내 로드 방식 결정 필요. Step 4 시작 전 확인. |

@@ -60,9 +60,9 @@
 - 인덱스: `(station_id, fuel_type, date)`
 - RLS: 읽기 공개 + 쓰기 Edge Function 전용 정책
 
-**구현 전 확인 필요 (fix.md #1, #2):**
-- Opinet `fuel_type` 값 형식 (숫자 코드 vs 문자열) — 공식 문서 확인 후 컬럼 타입 결정
-- `stations.updated_at` 자동 갱신 트리거 필요 여부
+**결정 사항 (fix.md #1, #2 해소):**
+- `price_snapshots.fuel_type` → `TEXT` 타입 (API 확인 전 안전한 선택, 숫자 확인 시 마이그레이션)
+- `stations.updated_at` → Supabase `moddatetime` 확장으로 자동 갱신 트리거 추가
 
 **완료 기준:**
 - SQL migration 파일 존재
