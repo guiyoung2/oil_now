@@ -2,8 +2,21 @@
 
 **목표:** Phase 1 MVP 계획 작성, 범위 통제, 단계별 완료 기준 정의
 
-**트리거:** 사용자가 "계획 하네스 모드"라고 명시할 때만 `planning-orchestrator` 스킬을 사용.
-다음에는 사용하지 않음: 기능 구현, 버그 수정, UI 수정, 단일 테스트 추가, 문구 수정.
+## 에이전트 운영 규칙
+
+### planning-orchestrator
+트리거: "계획 하네스 모드"라고 명시할 때만 사용.
+역할: 계획/검토/감리만 수행. 구현 없음.
+
+### data-pipeline-reviewer
+트리거: Supabase 스키마, Edge Function, 데이터 파이프라인 작업 완료 후 자동 검토.
+적용 Step: Step 2 (Supabase 스키마), Step 3 (collect-prices Edge Function)
+역할: 스키마 타당성, 멱등 적재, RLS 정책, API 연동 검증.
+
+### frontend-dashboard-reviewer
+트리거: 홈 화면, 주유소 상세 화면 작업 완료 후 자동 검토.
+적용 Step: Step 4 (홈 화면), Step 5 (주유소 상세 화면)
+역할: 카카오맵, 가상 스크롤, 차트, 즐겨찾기, UX, 접근성 검증.
 
 ---
 

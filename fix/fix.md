@@ -1,7 +1,7 @@
 # Fix 추적 — oil_now
 
 > Phase 1 구현 중 발견된 이슈 및 수정 기록
-> 마지막 갱신: 2026-06-03
+> 마지막 갱신: 2026-06-10
 
 ---
 
@@ -22,7 +22,7 @@
 
 | # | 설명 | 수정된 파일 | 검증 결과 | 완료일 |
 |---|------|-----------|----------|-------|
-| - | - | - | - | - |
+| S1 | Step 1 스캐폴딩 완료 — Vite 8 + React 19 + TS, Tailwind v4, TanStack Query/Virtual, Zustand, Recharts, Vitest, MSW, vite-plugin-pwa 설치 및 기본 폴더 구조 생성 | package.json, vite.config.ts, src/index.css, src/App.tsx, tsconfig.app.json | npm run dev ✅ / vitest run 1 passed ✅ / tsc --noEmit ✅ | 2026-06-10 |
 
 ---
 
