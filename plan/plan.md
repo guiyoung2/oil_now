@@ -3,7 +3,7 @@
 > 생성일: 2026-06-03
 > 마지막 갱신: 2026-06-10
 > 현재 Phase: Phase 1 — MVP
-> 현재 Step: Step 2 (미시작)
+> 현재 Step: Step 3 (미시작)
 
 ---
 
@@ -12,8 +12,8 @@
 | Step | 작업 | 상태 |
 |------|------|------|
 | Step 1 | 프로젝트 스캐폴딩 | ✅ 완료 |
-| Step 2 | Supabase 스키마 | ⬜ 미시작 |
-| Step 3 | collect-prices Edge Function | ⬜ 미시작 |
+| Step 2 | Supabase 스키마 | ✅ 완료 |
+| Step 3 | collect-prices Edge Function | 🔶 구현 완료 (배포 전) |
 | Step 4 | 홈 화면 | ⬜ 미시작 |
 | Step 5 | 주유소 상세 화면 | ⬜ 미시작 |
 | Step 6 | QA 패스 | ⬜ 미시작 |
@@ -50,7 +50,7 @@
 
 ## Step 2: Supabase 스키마
 
-**상태:** ⬜ 미시작
+**상태:** ✅ 완료 (2026-06-10)
 
 **범위:**
 - `stations` 테이블: id(오피넷 UNI_ID, PK), name, brand, address, lat, lng(WGS84), is_self, updated_at
@@ -71,10 +71,10 @@
 - RLS 정책 명시 (읽기 공개, 쓰기 서비스 롤 전용)
 
 **검증 체크리스트:**
-- [ ] migration 실행 성공
-- [ ] unique constraint `(station_id, date, fuel_type)` 동작
-- [ ] 인덱스 생성 확인
-- [ ] RLS 읽기/쓰기 정책 동작
+- [x] migration 실행 성공
+- [x] unique constraint `(station_id, date, fuel_type)` 동작
+- [x] 인덱스 생성 확인
+- [x] RLS 읽기/쓰기 정책 동작
 
 **다음 Step:** Step 3 collect-prices Edge Function
 
@@ -82,20 +82,20 @@
 
 ## Step 3: collect-prices Edge Function
 
-**상태:** ⬜ 미시작
+**상태:** 🔶 구현 완료 / 배포 미실시 (2026-06-10)
 
 **범위:**
-- Opinet API 클라이언트 (환경변수로 API 키 관리)
-- 응답 파싱
-- KATEC → WGS84 좌표 변환 (proj4 라이브러리 사용 검토)
-- `stations` upsert, `price_snapshots` insert (멱등)
-- `collection_logs` 기록 (success/partial/fail)
-- 부분 실패 허용: 지역 순회 중 일부 실패해도 나머지 계속 수집
-- pg_cron 일별 스케줄 설정
+- Opinet API 클라이언트 (환경변수로 API 키 관리) ✅
+- 응답 파싱 (`src/lib/parseOpinet.ts`) ✅
+- KATEC → WGS84 좌표 변환 — 순수 수학 구현, 외부 의존성 없음 (`src/lib/coord.ts`) ✅
+- `stations` + `price_snapshots` 조합 단위 배치 upsert (멱등) ✅
+- `collection_logs` 3-status (success/partial/fail) 기록, rows=0 가드 포함 ✅
+- 부분 실패 허용: 시도/유종 조합별 try/catch 격리 ✅
+- pg_cron 마이그레이션 — Vault 시크릿 참조 방식, git 커밋 안전 ✅
 
-**구현 전 확인 필요 (fix.md #3, #4):**
-- Opinet 정확한 엔드포인트 / 유종코드 (공식 문서 확인 필수)
-- 전국 수집 전략: 지역코드 순회 vs 반경 누적, Edge Function 실행시간(기본 150초) 초과 대응 배치 분할
+**미결 이슈:**
+- fix.md #14: lowTop10.do 파라미터명 실호출 미검증 → 최초 배포 후 확인 필요
+- fix.md #11: coord 코드 중복 → Phase 2 개선 예정
 
 **완료 기준:**
 - Edge Function 배포 가능
@@ -105,11 +105,12 @@
 - API 키 클라이언트 노출 없음
 
 **검증 체크리스트:**
-- [ ] 좌표 변환 단위 테스트 통과 (기준점 2개 이상)
-- [ ] 파서 단위 테스트 통과 (MSW/fixture)
-- [ ] collection_logs 3가지 status 기록 확인
-- [ ] API 키 환경변수 처리 (클라이언트 소스에 키 없음)
-- [ ] 배치 분할 전략 적용 (실행시간 한도 대응)
+- [x] 좌표 변환 단위 테스트 통과 (기준점 3개 — TM원점/서울/제주)
+- [x] 파서 단위 테스트 통과 (fixture 6개)
+- [x] collection_logs 3가지 status 코드 로직 구현 + rows=0 가드
+- [x] API 키 환경변수 처리 (클라이언트 소스에 키 없음)
+- [x] 배치 upsert 적용 (조합 단위 일괄 처리)
+- [ ] 실제 배포 후 Opinet API 파라미터·응답 경로 실호출 검증 (fix.md #14)
 
 **다음 Step:** Step 4 홈 화면
 
@@ -229,5 +230,5 @@
 
 ## 다음 작업
 
-Step 2 Supabase 스키마 시작.
-"계획 하네스 모드로 Step 2 완료 확인해줘" 로 완료 검증 요청 가능.
+Step 3 구현 완료. Step 4 홈 화면으로 진행.
+단, Step 4 시작 전 fix.md #5 (카카오맵 SDK 비동기 로드 방식) 결정 필요.
