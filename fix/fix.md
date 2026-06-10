@@ -35,6 +35,7 @@
 | S2 | Step 2 Supabase 스키마 완료 — stations/price_snapshots/collection_logs 테이블 생성, unique constraint (station_id,date,fuel_type), 인덱스, RLS 정책(읽기 공개/쓰기 service_role), moddatetime 트리거 | Supabase migration: create_phase1_schema | 테이블 3개 ✅ / unique constraint ✅ / 인덱스 ✅ / RLS 6개 정책 ✅ / 멱등 upsert ✅ | 2026-06-10 |
 | S3 | Step 3 collect-prices Edge Function 구현 — KATEC→WGS84 순수 수학 변환, 오피넷 파서, 배치 upsert, collection_logs 3-status, Vault 기반 pg_cron 마이그레이션 | supabase/functions/collect-prices/index.ts, src/lib/coord.ts, src/lib/parseOpinet.ts, src/test/coord.test.ts, src/test/parseOpinet.test.ts, supabase/migrations/20260610000001 | vitest 10/10 ✅ / tsc --noEmit ✅ / 미결: #14(API 파라미터 실호출 검증), #11(coord 코드 중복) | 2026-06-10 |
 | S4 | Vercel 배포 빌드 실패 수정 — `vite.config.ts`의 `test` 설정 타입이 Vite `defineConfig`에서 인식되지 않던 문제를 Vitest config helper로 전환 | vite.config.ts, plan/plan.md, fix/fix.md | npm run build ✅ / npm run test -- --run ✅ | 2026-06-10 |
+| S5 | Task 4 Zustand filterStore 구현 — TDD 방식. RED: 테스트 파일 생성, FAIL 확인. GREEN: 최소 코드로 3 tests PASS. 초기값(gasoline, distance), setFuelType, setSortOrder | src/store/filterStore.ts, src/test/filterStore.test.ts | vitest 3/3 PASS ✅ / npm run test 전체 16/16 PASS ✅ / git commit 230efa0 ✅ | 2026-06-10 |
 
 ---
 
