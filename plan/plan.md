@@ -41,8 +41,8 @@
 
 **검증 체크리스트:**
 - [ ] `npm run dev` 200 응답 확인
-- [ ] `npm run test` 실행 확인
-- [ ] `tsc --noEmit` 오류 없음
+- [x] `npm run test` 실행 확인
+- [x] `npm run build` TypeScript/Vite 빌드 오류 없음
 
 **다음 Step:** Step 2 Supabase 스키마
 
@@ -121,7 +121,7 @@
 **상태:** ⬜ 미시작
 
 **범위:**
-- Geolocation → 카카오맵 표시 (SDK 비동기 로드 처리 포함)
+- Geolocation → 카카오맵 표시 (index.html 정적 스크립트 태그 로드)
 - Geolocation 거부 시 fallback (시/도 드롭다운)
 - 주변 주유소 마커 + **카카오맵 내장 클러스터러** 사용
 - 주유소 리스트 (**TanStack Virtual** 가상 스크롤)
@@ -158,15 +158,14 @@
 - 현재가 표시
 - 가격 변동 차트 (Recharts, 누적 price_snapshots)
 - 빈 히스토리 empty state ("데이터 누적 중" 안내)
-- 즐겨찾기 localStorage 토글 (로그인 없이)
-- 즐겨찾기 목록 화면 포함 여부: **localStorage 기반 탭/페이지 포함** (사용자 결정 필요, 기본 포함으로 가정)
+- 즐겨찾기 ☆ 토글 버튼 (localStorage 저장/불러오기, 로그인 없이)
+- 즐겨찾기 목록 화면 없음 → Phase 2 보류
 - 상세 진입: 리스트 클릭 + URL 파라미터 (딥링크 고려)
 
 **완료 기준:**
 - 히스토리 데이터 없을 때 crash 없음
 - localStorage 즐겨찾기 저장/불러오기 정상 (새로고침 유지)
 - 차트 로딩/empty 상태 처리
-- 즐겨찾기 목록 화면 정상 렌더링
 
 **검증 체크리스트:**
 - [ ] 빈 히스토리 empty state 렌더링 (crash 없음)
@@ -219,6 +218,7 @@
 | `collect-news` Edge Function | 데이터 파이프라인 | Phase 2 보조 기능 |
 | 뉴스 섹션 화면 | 프론트엔드 | Phase 2 보조 기능 |
 | Supabase Auth 로그인 | 인증 | Phase 3 선택 기능 |
+| 즐겨찾기 목록 화면 (탭/페이지) | 프론트엔드 | Phase 2 보류 — Phase 1은 상세화면 ☆ 토글만 |
 | 즐겨찾기 DB 동기화 (`favorites` 테이블 + RLS) | 데이터 | 로그인 도입 시에만 |
 | 웹푸시 알림 VAPID (`notify-price`) | 알림 | 비핵심, 보류 |
 | `price_alerts` 테이블 | 데이터 | 알림 도입 시에만 |
@@ -231,4 +231,4 @@
 ## 다음 작업
 
 Step 3 구현 완료. Step 4 홈 화면으로 진행.
-단, Step 4 시작 전 fix.md #5 (카카오맵 SDK 비동기 로드 방식) 결정 필요.
+fix.md #5(SDK 로드), #6(즐겨찾기 목록) 결정 완료. 미결 이슈 없음.

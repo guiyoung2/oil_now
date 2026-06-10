@@ -13,8 +13,8 @@
 | 2 | `schema` | 계획 감리 | minor | ✅ 결정 | `stations.updated_at` 자동 갱신 트리거 추가. Supabase `moddatetime` 확장 사용. |
 | 3 | `pipeline` | 계획 감리 | minor | ✅ 해소 | 엔드포인트·유종코드·응답필드·Key 모두 확인 완료. Base URL: https://www.opinet.co.kr/api/ / 엔드포인트: lowTop10.do(시도별 최저가 TOP20), aroundAll.do(반경 주유소), detailById.do, avgAllPrice.do / 유종코드: B027(휘발유) D047(경유) B034(고급휘발유) C004(등유) K015(자동차부탄) / 시도코드: 01~19(18개) / 응답필드: UNI_ID OS_NM NEW_ADR POLL_DIV_CD(브랜드) GIS_X_COOR GIS_Y_COOR PRICE / 좌표: KATEC→WGS84 변환 필요 / 일일한도: 1,500회 / 수집전략: lowTop10.do cnt=20 per 시도(18) per 유종(5) = 90회/일 |
 | 4 | `pipeline` | 계획 감리 | minor | ✅ 결정 | 전국 수집 전략: 시도 17개 순차 순회(A). pg_cron → 함수 1개 → 시도별 루프. 속도 문제 시 Phase 2에서 지역별 병렬 분할로 개선. 일일한도 1,500회/API키 감안하여 유종 1개씩 per 시도 요청 설계. |
-| 5 | `ui` | 계획 감리 | minor | 미결 | 카카오맵 SDK 비동기 로드 처리 — 스크립트 태그 삽입 시 React 생명주기와 충돌 가능. 동적 import 또는 useEffect 내 로드 방식 결정 필요. Step 4 시작 전 확인. |
-| 6 | `ui` | 계획 감리 | minor | 미결 | 즐겨찾기 목록 화면 범위 — Phase 1에 localStorage 기반 즐겨찾기 탭/페이지 포함 여부. 현재 plan.md에는 포함으로 가정. 사용자 확인 권장. |
+| 5 | `ui` | 계획 감리 | minor | ✅ 결정 | 카카오맵 SDK → `index.html` 정적 스크립트 태그 방식 채택. 공식 가이드 방식, 단순. 성능 최적화(동적 로드)는 Phase 2 검토. |
+| 6 | `ui` | 계획 감리 | minor | ✅ 결정 | 즐겨찾기 목록 화면 → Phase 1 제외. 로그인 없는 MVP에서 목록 관리 불필요. 각 주유소 상세 화면에 ☆ 토글 버튼만 포함. 목록 화면은 Phase 2 보류. |
 | 7 | `pipeline` | Step 2 검토 | minor | ✅ 결정 | price 0·결측 처리: 수집 시 price ≤ 0 행 스킵(적재 안 함). Step 3 완료 기준에 명시. |
 | 8 | `pipeline` | Step 2 검토 | minor | ✅ 결정 | fuel_type 정규화: 오피넷 코드 → 앱 내부 코드 변환. 매핑: B027→gasoline / D047→diesel / B034→premium / C004→kerosene / K015→lpg. |
 | 9 | `pipeline` | Step 2 검토 | minor | ✅ 결정 | date KST 기준: 수집 함수에서 now() AT TIME ZONE 'Asia/Seoul' 으로 date 계산. |
@@ -34,6 +34,7 @@
 | S1 | Step 1 스캐폴딩 완료 — Vite 8 + React 19 + TS, Tailwind v4, TanStack Query/Virtual, Zustand, Recharts, Vitest, MSW, vite-plugin-pwa 설치 및 기본 폴더 구조 생성 | package.json, vite.config.ts, src/index.css, src/App.tsx, tsconfig.app.json | npm run dev ✅ / vitest run 1 passed ✅ / tsc --noEmit ✅ | 2026-06-10 |
 | S2 | Step 2 Supabase 스키마 완료 — stations/price_snapshots/collection_logs 테이블 생성, unique constraint (station_id,date,fuel_type), 인덱스, RLS 정책(읽기 공개/쓰기 service_role), moddatetime 트리거 | Supabase migration: create_phase1_schema | 테이블 3개 ✅ / unique constraint ✅ / 인덱스 ✅ / RLS 6개 정책 ✅ / 멱등 upsert ✅ | 2026-06-10 |
 | S3 | Step 3 collect-prices Edge Function 구현 — KATEC→WGS84 순수 수학 변환, 오피넷 파서, 배치 upsert, collection_logs 3-status, Vault 기반 pg_cron 마이그레이션 | supabase/functions/collect-prices/index.ts, src/lib/coord.ts, src/lib/parseOpinet.ts, src/test/coord.test.ts, src/test/parseOpinet.test.ts, supabase/migrations/20260610000001 | vitest 10/10 ✅ / tsc --noEmit ✅ / 미결: #14(API 파라미터 실호출 검증), #11(coord 코드 중복) | 2026-06-10 |
+| S4 | Vercel 배포 빌드 실패 수정 — `vite.config.ts`의 `test` 설정 타입이 Vite `defineConfig`에서 인식되지 않던 문제를 Vitest config helper로 전환 | vite.config.ts, plan/plan.md, fix/fix.md | npm run build ✅ / npm run test -- --run ✅ | 2026-06-10 |
 
 ---
 
