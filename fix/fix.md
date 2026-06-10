@@ -36,6 +36,7 @@
 | S3 | Step 3 collect-prices Edge Function 구현 — KATEC→WGS84 순수 수학 변환, 오피넷 파서, 배치 upsert, collection_logs 3-status, Vault 기반 pg_cron 마이그레이션 | supabase/functions/collect-prices/index.ts, src/lib/coord.ts, src/lib/parseOpinet.ts, src/test/coord.test.ts, src/test/parseOpinet.test.ts, supabase/migrations/20260610000001 | vitest 10/10 ✅ / tsc --noEmit ✅ / 미결: #14(API 파라미터 실호출 검증), #11(coord 코드 중복) | 2026-06-10 |
 | S4 | Vercel 배포 빌드 실패 수정 — `vite.config.ts`의 `test` 설정 타입이 Vite `defineConfig`에서 인식되지 않던 문제를 Vitest config helper로 전환 | vite.config.ts, plan/plan.md, fix/fix.md | npm run build ✅ / npm run test -- --run ✅ | 2026-06-10 |
 | S5 | Task 4 Zustand filterStore 구현 — TDD 방식. RED: 테스트 파일 생성, FAIL 확인. GREEN: 최소 코드로 3 tests PASS. 초기값(gasoline, distance), setFuelType, setSortOrder | src/store/filterStore.ts, src/test/filterStore.test.ts | vitest 3/3 PASS ✅ / npm run test 전체 16/16 PASS ✅ / git commit 230efa0 ✅ | 2026-06-10 |
+| S6 | Step 4 홈 화면 구현 완료 (서브에이전트 11-Task) — react-router-dom/supabase 설치, 타입/유틸, MSW, filterStore, useGeolocation/useStations, FilterBar/StationCard/EmptyState/StationList/KakaoMap, HomePage + App.tsx 조립 | 17개 신규 파일 + index.html, src/main.tsx 수정 | 10 files 35 tests ✅ / tsc --noEmit ✅ / 커밋 6a5f5d9 | 2026-06-10 |
 
 ---
 
