@@ -9,7 +9,7 @@ interface FilterState {
 }
 
 export const useFilterStore = create<FilterState>((set) => ({
-  fuelType: 'gasoline',
+  fuelType: 'gasoline_diesel',
   sortOrder: 'distance',
   setFuelType: (fuelType) => set({ fuelType }),
   setSortOrder: (sortOrder) => set({ sortOrder }),

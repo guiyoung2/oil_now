@@ -2,9 +2,8 @@ import { useFilterStore } from '../../store/filterStore'
 import type { FuelType, SortOrder } from '../../types/station'
 
 const FUEL_OPTIONS: { value: FuelType; label: string }[] = [
-  { value: 'gasoline', label: '휘발유' },
-  { value: 'diesel', label: '경유' },
-  { value: 'lpg', label: 'LPG' },
+  { value: 'gasoline_diesel' as FuelType, label: '휘발유·경유' },
+  { value: 'lpg' as FuelType, label: 'LPG' },
 ]
 
 export function FilterBar() {

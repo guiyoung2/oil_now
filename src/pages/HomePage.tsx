@@ -36,6 +36,7 @@ export function HomePage() {
           lat={activeLat}
           lng={activeLng}
           stations={stations}
+          fuelType={fuelType}
         />
       ) : (
         <div
@@ -85,6 +86,7 @@ export function HomePage() {
       <StationList
         stations={stations}
         onStationClick={(id) => navigate(`/stations/${id}`)}
+        fuelType={fuelType}
       />
     </div>
   )

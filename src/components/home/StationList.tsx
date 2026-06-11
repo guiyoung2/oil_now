@@ -2,14 +2,15 @@ import { useRef } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { StationCard } from './StationCard'
 import { EmptyState } from './EmptyState'
-import type { StationWithPrice } from '../../types/station'
+import type { FuelType, StationWithPrice } from '../../types/station'
 
 interface Props {
   stations: StationWithPrice[]
   onStationClick: (id: string) => void
+  fuelType: FuelType
 }
 
-export function StationList({ stations, onStationClick }: Props) {
+export function StationList({ stations, onStationClick, fuelType }: Props) {
   const parentRef = useRef<HTMLDivElement>(null)
 
   const virtualizer = useVirtualizer({
@@ -37,6 +38,7 @@ export function StationList({ stations, onStationClick }: Props) {
                 station={station}
                 isLowest={lowestPrice !== null && station.price === lowestPrice}
                 onClick={() => onStationClick(station.id)}
+                fuelType={fuelType}
               />
             </div>
           )

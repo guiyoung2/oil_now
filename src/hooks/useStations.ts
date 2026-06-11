@@ -6,7 +6,7 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? 'http://localhost:5432
 async function fetchFuel(
   lat: number,
   lng: number,
-  fuel: FuelType,
+  fuel: 'gasoline' | 'diesel' | 'lpg',
 ): Promise<StationWithPrice[]> {
   const url = new URL(`${SUPABASE_URL}/functions/v1/around-stations`)
   url.searchParams.set('lat', String(lat))
@@ -26,26 +26,23 @@ export function useStations(
     queryKey: ['stations', lat, lng, fuelType],
     enabled: lat !== null && lng !== null,
     queryFn: async (): Promise<StationWithPrice[]> => {
-      // 휘발유·경유는 항상 병렬 조회해 두 가격을 함께 표시
-      const fuels: FuelType[] = ['gasoline', 'diesel']
-      if (fuelType !== 'gasoline' && fuelType !== 'diesel') fuels.push(fuelType)
+      const fuelCalls = fuelType === 'gasoline_diesel'
+        ? (['gasoline', 'diesel'] as const)
+        : (['lpg'] as const)
 
-      const results = await Promise.all(fuels.map((f) => fetchFuel(lat!, lng!, f)))
+      const results = await Promise.all(fuelCalls.map((f) => fetchFuel(lat!, lng!, f)))
 
       const map = new Map<string, StationWithPrice>()
 
-      fuels.forEach((fuel, i) => {
+      fuelCalls.forEach((fuel, i) => {
         for (const s of results[i]) {
           if (!map.has(s.id)) {
             map.set(s.id, { ...s, gasolinePrice: null, dieselPrice: null, price: null })
           }
           const entry = map.get(s.id)!
-          if (fuel === 'gasoline') entry.gasolinePrice = s.price
+          if (fuel === 'gasoline') { entry.gasolinePrice = s.price; entry.price = s.price; entry.latestDate = s.latestDate }
           else if (fuel === 'diesel') entry.dieselPrice = s.price
-          if (fuel === fuelType) {
-            entry.price = s.price
-            entry.latestDate = s.latestDate
-          }
+          else if (fuel === 'lpg') { entry.price = s.price; entry.latestDate = s.latestDate }
         }
       })
 

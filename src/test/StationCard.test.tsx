@@ -21,32 +21,51 @@ const station: StationWithPrice = {
 
 describe('StationCard', () => {
   test('이름, 거리, 가격 렌더링', () => {
-    render(<StationCard station={station} isLowest={false} onClick={() => {}} />)
+    render(<StationCard station={station} isLowest={false} onClick={() => {}} fuelType="gasoline_diesel" />)
     expect(screen.getByText('강남 SK에너지')).toBeInTheDocument()
     expect(screen.getByText(/340m/)).toBeInTheDocument()
     expect(screen.getByText(/1,680원/)).toBeInTheDocument()
   })
 
   test('경유 가격 없을 때 — 표시', () => {
-    render(<StationCard station={{ ...station, dieselPrice: null }} isLowest={false} onClick={() => {}} />)
+    render(<StationCard station={{ ...station, dieselPrice: null }} isLowest={false} onClick={() => {}} fuelType="gasoline_diesel" />)
     expect(screen.getByText('—')).toBeInTheDocument()
   })
 
   test('isLowest=true → 가격에 text-blue-600 클래스', () => {
-    render(<StationCard station={station} isLowest={true} onClick={() => {}} />)
+    render(<StationCard station={station} isLowest={true} onClick={() => {}} fuelType="gasoline_diesel" />)
     expect(screen.getByText(/1,680원/)).toHaveClass('text-blue-600')
   })
 
   test('셀프 주유소 표시', () => {
-    render(<StationCard station={{ ...station, is_self: true }} isLowest={false} onClick={() => {}} />)
+    render(<StationCard station={{ ...station, is_self: true }} isLowest={false} onClick={() => {}} fuelType="gasoline_diesel" />)
     expect(screen.getByText('셀프')).toBeInTheDocument()
   })
 
   test('onClick 핸들러 호출', async () => {
     const onClick = vi.fn()
     const user = userEvent.setup()
-    render(<StationCard station={station} isLowest={false} onClick={onClick} />)
+    render(<StationCard station={station} isLowest={false} onClick={onClick} fuelType="gasoline_diesel" />)
     await user.click(screen.getByRole('button'))
     expect(onClick).toHaveBeenCalledTimes(1)
+  })
+
+  test('lpg 모드에서 LPG 가격 표시', () => {
+    const lpgStation: StationWithPrice = {
+      ...station,
+      price: 890,
+      gasolinePrice: null,
+      dieselPrice: null,
+    }
+    render(<StationCard station={lpgStation} isLowest={false} onClick={() => {}} fuelType="lpg" />)
+    expect(screen.getByText('890원')).toBeInTheDocument()
+    expect(screen.queryByText('휘발유')).not.toBeInTheDocument()
+    expect(screen.queryByText('경유')).not.toBeInTheDocument()
+  })
+
+  test('gasoline_diesel 모드에서 isLowest → 휘발유 가격에 text-blue-600', () => {
+    render(<StationCard station={station} isLowest={true} onClick={() => {}} fuelType="gasoline_diesel" />)
+    const gasolinePrice = screen.getByText('1,680원')
+    expect(gasolinePrice).toHaveClass('text-blue-600')
   })
 })

@@ -35,20 +35,20 @@ function makeStation(id: string, price: number | null, distance: number): Statio
 
 describe('StationList', () => {
   test('빈 배열 → EmptyState 렌더링', () => {
-    render(<StationList stations={[]} onStationClick={() => {}} />)
+    render(<StationList stations={[]} onStationClick={() => {}} fuelType="gasoline_diesel" />)
     expect(screen.getByText(/주변 2km 내 주유소가 없어요/)).toBeInTheDocument()
   })
 
   test('주유소 있을 때 카드 렌더링', () => {
     const stations = [makeStation('001', 1680, 300), makeStation('002', 1650, 500)]
-    render(<StationList stations={stations} onStationClick={() => {}} />)
+    render(<StationList stations={stations} onStationClick={() => {}} fuelType="gasoline_diesel" />)
     expect(screen.getByText('주유소 001')).toBeInTheDocument()
     expect(screen.getByText('주유소 002')).toBeInTheDocument()
   })
 
   test('최저가 주유소 isLowest=true 전달', () => {
     const stations = [makeStation('001', 1680, 300), makeStation('002', 1620, 500)]
-    render(<StationList stations={stations} onStationClick={() => {}} />)
+    render(<StationList stations={stations} onStationClick={() => {}} fuelType="gasoline_diesel" />)
     // 가격 1620원 카드에 text-blue-600 클래스
     const prices = screen.getAllByText(/원/)
     const lowestPriceEl = prices.find((el) => el.textContent === '1,620원')

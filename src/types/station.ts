@@ -1,4 +1,4 @@
-export type FuelType = 'gasoline' | 'diesel' | 'lpg' | 'premium' | 'kerosene'
+export type FuelType = 'gasoline_diesel' | 'lpg'
 export type SortOrder = 'distance' | 'price'
 
 export interface Station {

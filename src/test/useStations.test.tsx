@@ -9,7 +9,7 @@ function wrapper({ children }: { children: ReactNode }) {
 }
 
 test('lat/lng가 null이면 쿼리 비활성화', () => {
-  const { result } = renderHook(() => useStations(null, null, 'gasoline'), { wrapper })
+  const { result } = renderHook(() => useStations(null, null, 'gasoline_diesel'), { wrapper })
   expect(result.current.data).toBeUndefined()
   expect(result.current.fetchStatus).toBe('idle')
 })
@@ -17,7 +17,7 @@ test('lat/lng가 null이면 쿼리 비활성화', () => {
 test('lat/lng 제공 시 fixture 주유소 반환 (서울 중심 2km)', async () => {
   // fixtures 5개 모두 서울 중심(37.5665, 126.978) 기준 약 1km 이내
   const { result } = renderHook(
-    () => useStations(37.5665, 126.978, 'gasoline'),
+    () => useStations(37.5665, 126.978, 'gasoline_diesel'),
     { wrapper },
   )
   await waitFor(() => expect(result.current.isSuccess).toBe(true))
@@ -26,9 +26,9 @@ test('lat/lng 제공 시 fixture 주유소 반환 (서울 중심 2km)', async ()
   result.current.data!.forEach((s) => expect(s.distance).toBeGreaterThan(0))
 })
 
-test('gasoline fuelType 선택 시 price 필드 존재', async () => {
+test('gasoline_diesel fuelType 선택 시 price 필드 존재', async () => {
   const { result } = renderHook(
-    () => useStations(37.5665, 126.978, 'gasoline'),
+    () => useStations(37.5665, 126.978, 'gasoline_diesel'),
     { wrapper },
   )
   await waitFor(() => expect(result.current.isSuccess).toBe(true))
