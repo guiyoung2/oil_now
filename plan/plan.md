@@ -2,8 +2,8 @@
 
 > 생성일: 2026-06-03
 > 마지막 갱신: 2026-06-12
-> 현재 Phase: Phase 1 ✅ 완료 → **Phase 1 잔여 정리 ✅ 완료(2026-06-12)** → Phase 2 착수 준비
-> 현재 Step: Phase 1 + 잔여 정리 3건(coord 단일출처·collect-prices 검증·브라우저 실물) 모두 완료. 다음은 Phase 2-A.
+> 현재 Phase: **Phase 2-A ✅ 완료(2026-06-12)** → Phase 2-B(유가 뉴스) 준비
+> 현재 Step: Phase 2-A 실시간 유가 실데이터화 완료. regional_avg 테이블 + collect-regional-avg Edge Function + useAvgPrices Supabase 전환. 다음은 Phase 2-B.
 
 ---
 
@@ -307,14 +307,24 @@ Phase 1 기능은 완료됐으나, 데이터 신뢰성·코드 품질 측면에�
 > 범위 확정 (사용자 결정 2026-06-12): **실시간 유가 실데이터화 + 유가 뉴스** 2개만.
 > 즐겨찾기·로그인·알림은 현재 필요성 없음 → 보류(아래 "범위 밖" 참고).
 
-### Phase 2-A: 실시간 유가 실데이터화 (우선순위 1)
-첫 화면(실시간 유가 대시보드)이 현재 mock. UI/훅(`useAvgPrices`)은 이미 추상화 완료 → **백엔드만 붙이면 됨**.
+### Phase 2-A: 실시간 유가 실데이터화 ✅ 완료 (2026-06-12, S17)
 
-- `regional_avg` 테이블: `date, fuel_type, region(전국/시도), avg_price` + unique(date, fuel_type, region) 멱등
-- `collect-regional-avg` Edge Function: Opinet 평균가 API(`avgAllPrice.do` 등) → `regional_avg` upsert, pg_cron 일일
-- `useAvgPrices` 훅: mock → Supabase 쿼리 교체 (**UI 불변**)
-- 7일 추이 차트: `regional_avg` 최근 7일 조회로 연결
-- **완료 기준:** PricesPage 실데이터 표시, mock fixture 제거, `npm run test`/`build` 통과
+**API 확정:** `avgAllPrice.do?code={KEY}&out=json` 1회/일 → `RESULT.OIL[]` (4~5개 유종, 전국 평균)
+**시도별:** `avgSidoPrice.do?prodcd=B027` 존재 확인, Phase 2-B 이후 보류
+
+**완료 항목:**
+- `regional_avg` 테이블: `date/fuel_type/region/avg_price/diff` + unique(date,fuel_type,region) + RLS ✅
+- `collect-regional-avg` Edge Function: `avgAllPrice.do` → `_shared/parseAvgPrice.ts` → upsert, collection_logs 3-status ✅
+- `_shared/parseAvgPrice.ts` 단일 출처 (coord.ts 패턴 동일). `src/lib/parseAvgPrice.ts` re-export 배럴 ✅
+- `useAvgPrices` 훅: mock 제거 → Supabase REST 쿼리 (7일치 + 최신날짜 avgPrices + trend) ✅
+- MSW handlers에 `regional_avg` 핸들러 추가 (테스트 결정적 동작) ✅
+- `avgPriceFixtures.ts` 삭제 (내 변경으로 고아된 파일) ✅
+- 실호출 검증: rows=5, collection_logs status=success ✅
+- `npm run test` 81/81, `npm run build` 통과 ✅
+
+**미결:**
+- pg_cron 스케줄(`collect-regional-avg-daily`): pg_cron 확장 활성화 후 migration 재적용 필요 (fix.md #17)
+- 7일 추이 데이터는 매일 적재 누적 후 실제 7점이 됨 (오늘은 1~N점)
 
 ### Phase 2-B: 유가 뉴스 (우선순위 2)
 현재 NewsPage는 "준비 중" placeholder.
@@ -336,15 +346,16 @@ Phase 1 기능은 완료됐으나, 데이터 신뢰성·코드 품질 측면에�
 
 ## 다음 작업
 
-**현재 위치:** Phase 1 MVP + 잔여 정리 3건 모두 완료 (2026-06-12). **Phase 2 착수 준비 완료.**
+**현재 위치:** Phase 2-A 완료 (2026-06-12, S17). **다음: Phase 2-B 유가 뉴스 착수 준비.**
 
-1. ✅ 잔여 1: `coord.ts` 단일 출처화 (2026-06-12, S14) — 본문 1곳 + 왕복 테스트 통과
-2. ✅ 잔여 2: Edge Function 재배포 + collect-prices 실호출 검증 (2026-06-12, S15) — area 수정 후 1,667행 적재, collection_logs success
-3. ✅ 잔여 3: 브라우저 실물 확인 (2026-06-12, S16) — 3탭·차트·말풍선 verify 스킬로 확인
-4. **다음: Phase 2-A 착수** — `regional_avg` 테이블 + `collect-regional-avg` Edge Function + `useAvgPrices` 훅을 mock→Supabase 실데이터 전환 (UI 불변)
+1. ✅ 잔여 1: `coord.ts` 단일 출처화 (2026-06-12, S14)
+2. ✅ 잔여 2: Edge Function 재배포 + collect-prices 실호출 검증 (2026-06-12, S15)
+3. ✅ 잔여 3: 브라우저 실물 확인 (2026-06-12, S16)
+4. ✅ Phase 2-A: 실시간 유가 실데이터화 (2026-06-12, S17)
+5. **다음: Phase 2-B** — 유가 뉴스 소스 결정 → `news` 테이블 + `collect-news` + NewsPage UI
 
 ### 현재 데이터 현황
-- 개발 모드(npm run dev): MSW가 `around-stations` 요청을 가로채 **fixture mock 데이터** 반환
-- 프로덕션 빌드 / Supabase 직접 호출: **Opinet 실데이터** 반환
-- `collect-prices` 배포 완료 → Supabase 대시보드에서 수동 트리거 또는 pg_cron으로 DB 채우기 가능 (단 실호출 검증은 잔여 2에서)
-- **실시간 유가 대시보드(첫 화면)는 평균가 백엔드 부재로 아직 mock** → Phase 2-A에서 해소
+- 개발 모드(npm run dev): MSW가 `around-stations`(주변 주유소)·`regional_avg`(평균가) 요청을 가로채 fixture 반환
+- 프로덕션 빌드 / Supabase 직접 호출: Opinet 실데이터(`around-stations` Edge Function) + DB 실데이터(`regional_avg`)
+- `collect-prices`: pg_cron 미적용, 수동 트리거 가능
+- `collect-regional-avg`: 배포 완료(v1), 오늘 5개 유종 전국 평균가 적재. pg_cron 스케줄 미결(fix.md #17)
