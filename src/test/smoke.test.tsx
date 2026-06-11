@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import App from '../App'
 
 beforeEach(() => {
-  Object.defineProperty(global.navigator, 'geolocation', {
+  Object.defineProperty(globalThis.navigator, 'geolocation', {
     configurable: true,
     value: {
       getCurrentPosition: vi.fn(
@@ -14,9 +14,9 @@ beforeEach(() => {
   })
 })
 
-test('앱 렌더링 — FilterBar 유종 버튼 표시', async () => {
+test('앱 첫 화면 — 실시간 유가 대시보드 표시', async () => {
   render(<App />)
   await waitFor(() => {
-    expect(screen.getByRole('radio', { name: '휘발유' })).toBeInTheDocument()
+    expect(screen.getByText('전국 평균가')).toBeInTheDocument()
   })
 })

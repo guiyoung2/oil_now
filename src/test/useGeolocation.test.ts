@@ -6,7 +6,7 @@ const mockGetCurrentPosition = vi.fn()
 
 beforeEach(() => {
   vi.clearAllMocks()
-  Object.defineProperty(global.navigator, 'geolocation', {
+  Object.defineProperty(globalThis.navigator, 'geolocation', {
     configurable: true,
     value: { getCurrentPosition: mockGetCurrentPosition },
   })
@@ -36,7 +36,7 @@ describe('useGeolocation', () => {
   })
 
   test('geolocation 미지원 시 unavailable', async () => {
-    Object.defineProperty(global.navigator, 'geolocation', {
+    Object.defineProperty(globalThis.navigator, 'geolocation', {
       configurable: true,
       value: undefined,
     })
