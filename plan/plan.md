@@ -296,7 +296,13 @@
 
 ## 다음 작업
 
-Step 5 완료(2026-06-11). 다음 단계는 Step 6 QA 패스.
-- `npm run test` 49/49 통과, `npm run build` 통과, tsc --noEmit 오류 없음.
+Step 5 완료(2026-06-11), Step 3 배포 완료(2026-06-11). 다음 단계는 Step 6 QA 패스.
+- `npm run test` 52/52 통과, `npm run build` 통과.
 - 브라우저 수동 확인 잔여: 마커 클릭 말풍선 표시 (사용자 확인 대기).
-- 미결 이슈: #11(coord 코드 중복 — around-stations/collect-prices 모두 좌표 변환 인라인) — Phase 2 단일 출처화 예정.
+- 이중 가격 표시(휘발유+경유) 추가 완료(ec9eaf3).
+- 미결 이슈: #11(coord 코드 중복) — Phase 2 단일 출처화 예정.
+
+### 현재 데이터 현황
+- 개발 모드(npm run dev): MSW가 `around-stations` 요청을 가로채 **fixture mock 데이터** 반환
+- 프로덕션 빌드 / Supabase 직접 호출: **Opinet 실데이터** 반환
+- `collect-prices` 배포 완료 → Supabase 대시보드에서 수동 트리거 또는 pg_cron으로 DB 채우기 가능
