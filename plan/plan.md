@@ -1,9 +1,9 @@
 # Phase 1 실행 계획 — oil_now
 
 > 생성일: 2026-06-03
-> 마지막 갱신: 2026-06-11
-> 현재 Phase: Phase 1 — MVP ✅ 완료
-> 현재 Step: Phase 1 전체 완료 (2026-06-11)
+> 마지막 갱신: 2026-06-12
+> 현재 Phase: Phase 1 ✅ 완료 → **Phase 1 잔여 정리 진행 예정** → Phase 2
+> 현재 Step: Phase 1 전체 완료 (2026-06-11). 다음은 "Phase 1 잔여 정리" 3건 후 Phase 2 착수.
 
 ---
 
@@ -280,34 +280,69 @@
 
 ---
 
-## Phase 2 보류 항목
+## Phase 1 잔여 정리 (Phase 2 진입 전 마무리 — 사용자 결정 2026-06-12)
 
-| 항목 | 유형 | 이유 |
+Phase 1 기능은 완료됐으나, 데이터 신뢰성·코드 품질 측면에서 마무리할 3건. **Phase 2 착수 전 먼저 처리한다.**
+
+### 잔여 1: `coord.ts` 단일 출처화 (fix #11, major)
+- **문제:** 좌표 변환 코드가 `src/lib/coord.ts`와 Edge Function(`around-stations`, `collect-prices`)에 중복. 테스트는 `coord.ts`만 검증 → 프로덕션 복사본 drift 위험.
+- **작업:** 좌표 변환을 단일 모듈로 통합 (예: `supabase/functions/_shared/coord.ts`로 일원화 후 양쪽에서 참조, 또는 동등한 단일 출처화). Deno/브라우저 양 환경 import 제약을 구현 시 결정.
+- **검증:** 좌표 변환 본문이 한 곳에만 존재 + 왕복 테스트(서울/부산/제주) 통과.
+
+### 잔여 2: `collect-prices` 실호출 검증 (plan Step 3, fix #14 후속)
+- **문제:** `lowTop10.do`의 `siGunGu`/`cnt` 파라미터·응답 경로가 실호출로 미검증. DB에 실데이터가 실제로 쌓이는지 미확인.
+- **작업:** `collect-prices` 수동 트리거(Supabase 대시보드 또는 supabase MCP) 1회 실행.
+- **검증:** `collection_logs` status=success + `price_snapshots`·`stations` 행 수 > 0 확인.
+
+### 잔여 3: 브라우저 실물 확인
+- **대상:** 탭 전환 / 실시간 유가 추이 차트 표시 / 마커 클릭 말풍선(상호·브랜드·현재가·거리).
+- **검증:** 앱 실행 후 육안 확인 (또는 verify 스킬로 스크린샷).
+
+---
+
+## Phase 2 계획
+
+> 범위 확정 (사용자 결정 2026-06-12): **실시간 유가 실데이터화 + 유가 뉴스** 2개만.
+> 즐겨찾기·로그인·알림은 현재 필요성 없음 → 보류(아래 "범위 밖" 참고).
+
+### Phase 2-A: 실시간 유가 실데이터화 (우선순위 1)
+첫 화면(실시간 유가 대시보드)이 현재 mock. UI/훅(`useAvgPrices`)은 이미 추상화 완료 → **백엔드만 붙이면 됨**.
+
+- `regional_avg` 테이블: `date, fuel_type, region(전국/시도), avg_price` + unique(date, fuel_type, region) 멱등
+- `collect-regional-avg` Edge Function: Opinet 평균가 API(`avgAllPrice.do` 등) → `regional_avg` upsert, pg_cron 일일
+- `useAvgPrices` 훅: mock → Supabase 쿼리 교체 (**UI 불변**)
+- 7일 추이 차트: `regional_avg` 최근 7일 조회로 연결
+- **완료 기준:** PricesPage 실데이터 표시, mock fixture 제거, `npm run test`/`build` 통과
+
+### Phase 2-B: 유가 뉴스 (우선순위 2)
+현재 NewsPage는 "준비 중" placeholder.
+
+- 뉴스 소스 결정 (RSS/크롤링 대상) — 착수 시 brainstorming 필요
+- `news` 테이블: `id, title, url, source, published_at, summary`
+- `collect-news` Edge Function: 소스 수집 → `news` upsert, pg_cron
+- NewsPage: placeholder → 뉴스 리스트 UI
+- **완료 기준:** 뉴스 리스트 실데이터 렌더, `npm run test`/`build` 통과
+
+### 범위 밖 (현재 보류 — 필요성 재검토 시 부활)
+| 항목 | 유형 | 사유 |
 |------|------|------|
-| `collect-regional-avg` Edge Function | 데이터 파이프라인 | Phase 2 부가 섹션 |
-| 유가 동향 화면 | 프론트엔드 | Phase 2 부가 섹션 |
-| `collect-news` Edge Function | 데이터 파이프라인 | Phase 2 보조 기능 |
-| 뉴스 섹션 화면 | 프론트엔드 | Phase 2 보조 기능 |
-| Supabase Auth 로그인 | 인증 | Phase 3 선택 기능 |
-| 즐겨찾기 목록 화면 (탭/페이지) | 프론트엔드 | Phase 2 보류 — Phase 1은 상세화면 ☆ 토글만 |
-| 즐겨찾기 DB 동기화 (`favorites` 테이블 + RLS) | 데이터 | 로그인 도입 시에만 |
-| 웹푸시 알림 VAPID (`notify-price`) | 알림 | 비핵심, 보류 |
-| `price_alerts` 테이블 | 데이터 | 알림 도입 시에만 |
-| `regional_avg` 테이블 | 데이터 | Phase 2 |
-| `news` 테이블 | 데이터 | Phase 2 |
-| vite-plugin-pwa 웹푸시 설정 | 기능 | Phase 2 (PWA manifest 기본만 Phase 1 포함) |
+| 즐겨찾기 (☆ 토글 / 목록 / `favorites` DB) | 프론트+데이터 | 사용자 결정(2026-06-12): 필요성 못 느낌 |
+| Supabase Auth 로그인 | 인증 | 동상, 보류 |
+| 가격 알림 (`price_alerts`, `notify-price`, 웹푸시 VAPID) | 알림+데이터 | 동상, 보류. PWA manifest 기본만 Phase 1 포함 |
 
 ---
 
 ## 다음 작업
 
-**Phase 1 MVP 완전 완료 (2026-06-11)**
-- `npm run test` 177/177 통과 (48 files), `npm run build` 통과.
-- Lighthouse (프로덕션 빌드): Performance **96** / Accessibility **100** / Best Practices **100**.
-- 미결 이슈: #11(coord 코드 중복) — Phase 2 단일 출처화 예정.
-- 다음: Phase 2 설계 시작 (collect-regional-avg, 뉴스 크롤링, 즐겨찾기 등).
+**현재 위치:** Phase 1 MVP 완료 (2026-06-11) → Phase 1 잔여 정리 대기.
+
+1. 잔여 1: `coord.ts` 단일 출처화 → 검증: 본문 1곳 + 왕복 테스트 통과
+2. 잔여 2: `collect-prices` 수동 트리거 1회 → 검증: collection_logs success + 행 수 > 0
+3. 잔여 3: 브라우저 실물 확인 → 검증: 탭·차트·말풍선 육안 확인
+4. (잔여 정리 완료 후) Phase 2-A 착수: `regional_avg` + `collect-regional-avg` + `useAvgPrices` 실데이터 전환
 
 ### 현재 데이터 현황
 - 개발 모드(npm run dev): MSW가 `around-stations` 요청을 가로채 **fixture mock 데이터** 반환
 - 프로덕션 빌드 / Supabase 직접 호출: **Opinet 실데이터** 반환
-- `collect-prices` 배포 완료 → Supabase 대시보드에서 수동 트리거 또는 pg_cron으로 DB 채우기 가능
+- `collect-prices` 배포 완료 → Supabase 대시보드에서 수동 트리거 또는 pg_cron으로 DB 채우기 가능 (단 실호출 검증은 잔여 2에서)
+- **실시간 유가 대시보드(첫 화면)는 평균가 백엔드 부재로 아직 mock** → Phase 2-A에서 해소

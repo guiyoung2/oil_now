@@ -1,7 +1,7 @@
 # Fix 추적 — oil_now
 
 > Phase 1 구현 중 발견된 이슈 및 수정 기록
-> 마지막 갱신: 2026-06-11
+> 마지막 갱신: 2026-06-12
 
 ---
 
@@ -19,7 +19,7 @@
 | 8 | `pipeline` | Step 2 검토 | minor | ✅ 결정 | fuel_type 정규화: 오피넷 코드 → 앱 내부 코드 변환. 매핑: B027→gasoline / D047→diesel / B034→premium / C004→kerosene / K015→lpg. |
 | 9 | `pipeline` | Step 2 검토 | minor | ✅ 결정 | date KST 기준: 수집 함수에서 now() AT TIME ZONE 'Asia/Seoul' 으로 date 계산. |
 | 10 | `pipeline` | Step 2 검토 | minor | ✅ 결정 | collection_logs: 단일 행 관리(job 시작 시 INSERT, 종료 시 UPDATE). error TEXT에 실패 시도 목록 JSON 문자열로 기록. partial 기준: 1개 이상 시도 실패 시. |
-| 11 | `pipeline` | Step 3 검토 | major | 미결 | 좌표 변환 코드(`coord.ts`와 `index.ts`)가 완전 중복. 테스트는 coord.ts만 검증하므로 프로덕션 복사본 drift 가능. Phase 2에서 단일 출처화 검토. |
+| 11 | `pipeline` | Step 3 검토 | major | 미결 | 좌표 변환 코드(`coord.ts`와 `index.ts`)가 완전 중복. 테스트는 coord.ts만 검증하므로 프로덕션 복사본 drift 가능. **Phase 1 잔여 정리 "잔여 1"로 격상(2026-06-12) — Phase 2 진입 전 단일 출처화 처리** (plan.md 참고). |
 | 12 | `pipeline` | Step 3 검토 | critical | ✅ 해소 | pg_cron 마이그레이션의 service_role 키 평문 저장 문제. Supabase Vault 시크릿 참조 방식으로 전환 완료. git 커밋 안전. |
 | 13 | `pipeline` | Step 3 검토 | critical | ✅ 해소 | collection_logs status 오분류: API HTTP 200이나 rows=0이어도 success 기록 문제. totalRows===0 → partial, DB write 에러 failures에 반영 완료. |
 | 14 | `pipeline` | Step 3 검토 | major | ✅ 해소(S10) | aroundAll.do 실호출 검증 완료(2026-06-11). 응답 경로 `RESULT.OIL[]` 확인. aroundAll.do 응답 필드: UNI_ID/OS_NM/POLL_DIV_CD/PRICE(숫자)/DISTANCE(m)/GIS_X_COOR/GIS_Y_COOR. lowTop10.do(collect-prices)의 siGunGu/cnt는 배포 시 함께 확인 권장. |
