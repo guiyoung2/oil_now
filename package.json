@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lighthouse": "lighthouse http://localhost:4173 --output html --output-path ./lighthouse-report.html --only-categories=performance,accessibility,best-practices"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.1",
@@ -36,6 +37,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/coverage-v8": "^4.1.8",
+    "axe-core": "^4.12.1",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",

@@ -26,14 +26,14 @@ export function StationCard({ station, isLowest, onClick, fuelType }: Props) {
             <span className="text-xs text-gray-500 shrink-0">셀프</span>
           )}
         </div>
-        <div className="text-xs text-gray-400 mt-0.5">
+        <div className="text-xs text-gray-600 mt-0.5">
           {Math.round(station.distance)}m · {station.brand}
         </div>
       </div>
       <div className="shrink-0 text-right ml-3 space-y-0.5">
         {fuelType === 'lpg' ? (
           <div className="flex items-center gap-1.5 justify-end">
-            <span className="text-[10px] text-gray-400">LPG</span>
+            <span className="text-[10px] text-gray-600">LPG</span>
             <span className={`font-bold text-sm ${isLowest ? 'text-blue-600' : 'text-gray-900'}`}>
               {fmtPrice(station.price)}
             </span>
@@ -41,13 +41,13 @@ export function StationCard({ station, isLowest, onClick, fuelType }: Props) {
         ) : (
           <>
             <div className="flex items-center gap-1.5 justify-end">
-              <span className="text-[10px] text-gray-400">휘발유</span>
+              <span className="text-[10px] text-gray-600">휘발유</span>
               <span className={`font-bold text-sm ${gasolineIsLowest ? 'text-blue-600' : 'text-gray-900'}`}>
                 {fmtPrice(station.gasolinePrice)}
               </span>
             </div>
             <div className="flex items-center gap-1.5 justify-end">
-              <span className="text-[10px] text-gray-400">경유</span>
+              <span className="text-[10px] text-gray-600">경유</span>
               <span className="text-sm text-gray-700">
                 {fmtPrice(station.dieselPrice)}
               </span>
