@@ -13,7 +13,7 @@
 |------|------|------|
 | Step 1 | 프로젝트 스캐폴딩 | ✅ 완료 |
 | Step 2 | Supabase 스키마 | ✅ 완료 |
-| Step 3 | collect-prices Edge Function | 🔶 구현 완료 (배포 전) |
+| Step 3 | collect-prices Edge Function | ✅ 완료 (배포·실호출 검증 S15) |
 | Step 4 | 홈 화면 | ✅ 완료 |
 | Step 4.5 | 탭 네비게이션 + 실시간 유가 mock 대시보드 | ✅ 완료 |
 | Step 5 | 실시간 주변 주유소(Opinet) + 말풍선 오버레이 | ✅ 완료 |
@@ -326,7 +326,7 @@ Phase 1 기능은 완료됐으나, 데이터 신뢰성·코드 품질 측면에�
 - pg_cron 스케줄(`collect-regional-avg-daily`): pg_cron 확장 활성화 후 migration 재적용 필요 (fix.md #17)
 - 7일 추이 데이터는 매일 적재 누적 후 실제 7점이 됨 (오늘은 1~N점)
 
-### Phase 2-B: 유가 뉴스 (우선순위 2)
+### Phase 2-B: 유가 뉴스 ✅ 완료 (2026-06-12, S18·S19)
 
 **설계 확정 (2026-06-12, brainstorming):** `docs/superpowers/specs/2026-06-12-phase2b-news-design.md`
 
