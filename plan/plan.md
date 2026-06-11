@@ -290,10 +290,10 @@ Phase 1 기능은 완료됐으나, 데이터 신뢰성·코드 품질 측면에�
 - **검증:** ✅ 좌표 본문 1곳 + 왕복 테스트 7/7 + 전체 71/71 + build 통과.
 - **남은 일:** Edge Function **재배포** 필요(현 배포본은 옛 인라인 코드, 로직은 동일) → 잔여 2와 함께 처리.
 
-### 잔여 2: `collect-prices` 실호출 검증 (plan Step 3, fix #14 후속)
-- **문제:** `lowTop10.do`의 `siGunGu`/`cnt` 파라미터·응답 경로가 실호출로 미검증. DB에 실데이터가 실제로 쌓이는지 미확인.
-- **작업:** `collect-prices` 수동 트리거(Supabase 대시보드 또는 supabase MCP) 1회 실행.
-- **검증:** `collection_logs` status=success + `price_snapshots`·`stations` 행 수 > 0 확인.
+### 잔여 2: `collect-prices` 실호출 검증 (plan Step 3, fix #14 후속) — ✅ 완료 (2026-06-12, S15)
+- **문제:** `lowTop10.do`의 지역/`cnt` 파라미터·응답 경로가 실호출로 미검증. DB에 실데이터가 실제로 쌓이는지 미확인.
+- **처리:** Edge Function 2개를 `_shared/coord.ts` 반영해 재배포(around-stations v2, collect-prices v3). collect-prices 실호출 검증 중 **지역 파라미터 결함 발견(`siGunGu` 무시)** → `area`로 수정(fix #16).
+- **검증:** ✅ `collection_logs` status=success(9.3초) + 오늘 `price_snapshots` **1,667행 / 고유 주유소 1,356개** / stations 1,357. (`area` 수정 전 104행 → 수정 후 1,667행으로 정상화.)
 
 ### 잔여 3: 브라우저 실물 확인
 - **대상:** 탭 전환 / 실시간 유가 추이 차트 표시 / 마커 클릭 말풍선(상호·브랜드·현재가·거리).
@@ -335,11 +335,11 @@ Phase 1 기능은 완료됐으나, 데이터 신뢰성·코드 품질 측면에�
 
 ## 다음 작업
 
-**현재 위치:** Phase 1 MVP 완료 (2026-06-11) → Phase 1 잔여 정리 진행 중 (잔여 1 완료).
+**현재 위치:** Phase 1 MVP 완료 (2026-06-11) → Phase 1 잔여 정리 진행 중 (잔여 1·2 완료, 잔여 3만 남음).
 
 1. ✅ 잔여 1: `coord.ts` 단일 출처화 (2026-06-12, S14) — 본문 1곳 + 왕복 테스트 통과
-2. 잔여 2: Edge Function 재배포(`_shared/coord.ts` 반영) + `collect-prices` 수동 트리거 1회 → 검증: collection_logs success + 행 수 > 0
-3. 잔여 3: 브라우저 실물 확인 → 검증: 탭·차트·말풍선 육안 확인
+2. ✅ 잔여 2: Edge Function 재배포 + collect-prices 실호출 검증 (2026-06-12, S15) — area 수정 후 1,667행 적재, collection_logs success
+3. 잔여 3: 브라우저 실물 확인 → 검증: 탭·차트·말풍선 육안 확인 (사용자 육안 또는 verify 스킬)
 4. (잔여 정리 완료 후) Phase 2-A 착수: `regional_avg` + `collect-regional-avg` + `useAvgPrices` 실데이터 전환
 
 ### 현재 데이터 현황

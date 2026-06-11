@@ -31,7 +31,8 @@ async function fetchRegionFuel(
 ): Promise<OpinetStation[]> {
   const url = new URL("https://www.opinet.co.kr/api/lowTop10.do");
   url.searchParams.set("code", apiKey);
-  url.searchParams.set("siGunGu", sidoCode);
+  // fix.md #16: 지역 파라미터는 `area`(시도코드). `siGunGu`는 무시되어 전국 TOP만 반환됨(실호출 검증).
+  url.searchParams.set("area", sidoCode);
   url.searchParams.set("prodcd", fuelCode);
   url.searchParams.set("cnt", "20");
   url.searchParams.set("out", "json");
