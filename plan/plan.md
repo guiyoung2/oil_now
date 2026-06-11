@@ -284,10 +284,11 @@
 
 Phase 1 기능은 완료됐으나, 데이터 신뢰성·코드 품질 측면에서 마무리할 3건. **Phase 2 착수 전 먼저 처리한다.**
 
-### 잔여 1: `coord.ts` 단일 출처화 (fix #11, major)
+### 잔여 1: `coord.ts` 단일 출처화 (fix #11, major) — ✅ 완료 (2026-06-12, S14)
 - **문제:** 좌표 변환 코드가 `src/lib/coord.ts`와 Edge Function(`around-stations`, `collect-prices`)에 중복. 테스트는 `coord.ts`만 검증 → 프로덕션 복사본 drift 위험.
-- **작업:** 좌표 변환을 단일 모듈로 통합 (예: `supabase/functions/_shared/coord.ts`로 일원화 후 양쪽에서 참조, 또는 동등한 단일 출처화). Deno/브라우저 양 환경 import 제약을 구현 시 결정.
-- **검증:** 좌표 변환 본문이 한 곳에만 존재 + 왕복 테스트(서울/부산/제주) 통과.
+- **처리:** 본문을 `supabase/functions/_shared/coord.ts` 한 곳으로 통합. Edge Function 2개는 `../_shared/coord.ts` import, `src/lib/coord.ts`는 re-export 배럴(테스트·parseOpinet 경로 불변).
+- **검증:** ✅ 좌표 본문 1곳 + 왕복 테스트 7/7 + 전체 71/71 + build 통과.
+- **남은 일:** Edge Function **재배포** 필요(현 배포본은 옛 인라인 코드, 로직은 동일) → 잔여 2와 함께 처리.
 
 ### 잔여 2: `collect-prices` 실호출 검증 (plan Step 3, fix #14 후속)
 - **문제:** `lowTop10.do`의 `siGunGu`/`cnt` 파라미터·응답 경로가 실호출로 미검증. DB에 실데이터가 실제로 쌓이는지 미확인.
@@ -334,10 +335,10 @@ Phase 1 기능은 완료됐으나, 데이터 신뢰성·코드 품질 측면에�
 
 ## 다음 작업
 
-**현재 위치:** Phase 1 MVP 완료 (2026-06-11) → Phase 1 잔여 정리 대기.
+**현재 위치:** Phase 1 MVP 완료 (2026-06-11) → Phase 1 잔여 정리 진행 중 (잔여 1 완료).
 
-1. 잔여 1: `coord.ts` 단일 출처화 → 검증: 본문 1곳 + 왕복 테스트 통과
-2. 잔여 2: `collect-prices` 수동 트리거 1회 → 검증: collection_logs success + 행 수 > 0
+1. ✅ 잔여 1: `coord.ts` 단일 출처화 (2026-06-12, S14) — 본문 1곳 + 왕복 테스트 통과
+2. 잔여 2: Edge Function 재배포(`_shared/coord.ts` 반영) + `collect-prices` 수동 트리거 1회 → 검증: collection_logs success + 행 수 > 0
 3. 잔여 3: 브라우저 실물 확인 → 검증: 탭·차트·말풍선 육안 확인
 4. (잔여 정리 완료 후) Phase 2-A 착수: `regional_avg` + `collect-regional-avg` + `useAvgPrices` 실데이터 전환
 
