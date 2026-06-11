@@ -2,8 +2,8 @@
 
 > 생성일: 2026-06-03
 > 마지막 갱신: 2026-06-12
-> 현재 Phase: Phase 1 ✅ 완료 → **Phase 1 잔여 정리 진행 예정** → Phase 2
-> 현재 Step: Phase 1 전체 완료 (2026-06-11). 다음은 "Phase 1 잔여 정리" 3건 후 Phase 2 착수.
+> 현재 Phase: Phase 1 ✅ 완료 → **Phase 1 잔여 정리 ✅ 완료(2026-06-12)** → Phase 2 착수 준비
+> 현재 Step: Phase 1 + 잔여 정리 3건(coord 단일출처·collect-prices 검증·브라우저 실물) 모두 완료. 다음은 Phase 2-A.
 
 ---
 
@@ -295,9 +295,10 @@ Phase 1 기능은 완료됐으나, 데이터 신뢰성·코드 품질 측면에�
 - **처리:** Edge Function 2개를 `_shared/coord.ts` 반영해 재배포(around-stations v2, collect-prices v3). collect-prices 실호출 검증 중 **지역 파라미터 결함 발견(`siGunGu` 무시)** → `area`로 수정(fix #16).
 - **검증:** ✅ `collection_logs` status=success(9.3초) + 오늘 `price_snapshots` **1,667행 / 고유 주유소 1,356개** / stations 1,357. (`area` 수정 전 104행 → 수정 후 1,667행으로 정상화.)
 
-### 잔여 3: 브라우저 실물 확인
+### 잔여 3: 브라우저 실물 확인 — ✅ 완료 (2026-06-12, S16)
 - **대상:** 탭 전환 / 실시간 유가 추이 차트 표시 / 마커 클릭 말풍선(상호·브랜드·현재가·거리).
-- **검증:** 앱 실행 후 육안 확인 (또는 verify 스킬로 스크린샷).
+- **처리:** verify 스킬 — Playwright(chromium)로 앱 실제 구동(모바일 뷰포트, 서울 Geolocation), 스크린샷 관찰.
+- **검증:** ✅ 3탭 전환(`/`·`/nearby`·`/news` URL+활성 표시) / 평균가 카드 3종+7일 추이 차트(Recharts) / 카카오맵 마커 클릭 → 말풍선(S-OIL 1,660·1,510·990m·브랜드) 모두 확인. 뉴스 placeholder 정상.
 
 ---
 
@@ -335,12 +336,12 @@ Phase 1 기능은 완료됐으나, 데이터 신뢰성·코드 품질 측면에�
 
 ## 다음 작업
 
-**현재 위치:** Phase 1 MVP 완료 (2026-06-11) → Phase 1 잔여 정리 진행 중 (잔여 1·2 완료, 잔여 3만 남음).
+**현재 위치:** Phase 1 MVP + 잔여 정리 3건 모두 완료 (2026-06-12). **Phase 2 착수 준비 완료.**
 
 1. ✅ 잔여 1: `coord.ts` 단일 출처화 (2026-06-12, S14) — 본문 1곳 + 왕복 테스트 통과
 2. ✅ 잔여 2: Edge Function 재배포 + collect-prices 실호출 검증 (2026-06-12, S15) — area 수정 후 1,667행 적재, collection_logs success
-3. 잔여 3: 브라우저 실물 확인 → 검증: 탭·차트·말풍선 육안 확인 (사용자 육안 또는 verify 스킬)
-4. (잔여 정리 완료 후) Phase 2-A 착수: `regional_avg` + `collect-regional-avg` + `useAvgPrices` 실데이터 전환
+3. ✅ 잔여 3: 브라우저 실물 확인 (2026-06-12, S16) — 3탭·차트·말풍선 verify 스킬로 확인
+4. **다음: Phase 2-A 착수** — `regional_avg` 테이블 + `collect-regional-avg` Edge Function + `useAvgPrices` 훅을 mock→Supabase 실데이터 전환 (UI 불변)
 
 ### 현재 데이터 현황
 - 개발 모드(npm run dev): MSW가 `around-stations` 요청을 가로채 **fixture mock 데이터** 반환
