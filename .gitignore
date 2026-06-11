@@ -40,8 +40,13 @@ logs/
 
 # Claude Code 로컬 설정
 .claude/settings.local.json
+.claude/worktrees/
+.superpowers/
 
 # Vite 빌드 산출물
 dist
 dist-ssr
 *.local
+
+# Lighthouse 측정 산출물 (수치는 plan/fix에 기록)
+lighthouse-report*

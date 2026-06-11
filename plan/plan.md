@@ -2,8 +2,8 @@
 
 > 생성일: 2026-06-03
 > 마지막 갱신: 2026-06-11
-> 현재 Phase: Phase 1 — MVP
-> 현재 Step: Step 6 QA 패스
+> 현재 Phase: Phase 1 — MVP ✅ 완료
+> 현재 Step: Phase 1 전체 완료 (2026-06-11)
 
 ---
 
@@ -17,7 +17,7 @@
 | Step 4 | 홈 화면 | ✅ 완료 |
 | Step 4.5 | 탭 네비게이션 + 실시간 유가 mock 대시보드 | ✅ 완료 |
 | Step 5 | 실시간 주변 주유소(Opinet) + 말풍선 오버레이 | ✅ 완료 |
-| Step 6 | QA 패스 | ⬜ 미시작 |
+| Step 6 | QA 패스 | ✅ 완료 |
 
 ---
 
@@ -301,10 +301,11 @@
 
 ## 다음 작업
 
-Step 6 QA 패스 완료(2026-06-11). Phase 1 MVP 모든 Step 완료.
-- `npm run test` 177/177 통과, `npm run build` 통과.
-- 잔여: Lighthouse 수동 측정(`npm run build && npm run preview` 후 `npm run lighthouse`).
+**Phase 1 MVP 완전 완료 (2026-06-11)**
+- `npm run test` 177/177 통과 (48 files), `npm run build` 통과.
+- Lighthouse (프로덕션 빌드): Performance **96** / Accessibility **100** / Best Practices **100**.
 - 미결 이슈: #11(coord 코드 중복) — Phase 2 단일 출처화 예정.
+- 다음: Phase 2 설계 시작 (collect-regional-avg, 뉴스 크롤링, 즐겨찾기 등).
 
 ### 현재 데이터 현황
 - 개발 모드(npm run dev): MSW가 `around-stations` 요청을 가로채 **fixture mock 데이터** 반환
