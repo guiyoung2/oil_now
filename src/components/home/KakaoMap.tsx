@@ -25,11 +25,17 @@ function fmtDist(meters: number): string {
 }
 
 function overlayHtml(s: StationWithPrice): string {
-  return `<div style="background:#fff;border:1px solid #d1d5db;border-radius:10px;padding:10px 14px;box-shadow:0 4px 12px rgba(0,0,0,.15);min-width:140px;font-family:sans-serif;position:relative;cursor:default">
-  <div style="font-weight:700;font-size:14px;color:#111;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px">${s.name}</div>
-  <div style="font-size:12px;color:#6b7280;margin-bottom:4px">${s.brand}</div>
-  <div style="font-size:15px;font-weight:700;color:#dc2626">${fmtPrice(s.price)}</div>
-  <div style="font-size:12px;color:#9ca3af">${fmtDist(s.distance)}</div>
+  const gasolineRow = s.gasolinePrice != null
+    ? `<div style="font-size:12px;color:#374151"><span style="color:#9ca3af">휘발유 </span><span style="font-weight:700;color:#dc2626">${fmtPrice(s.gasolinePrice)}</span></div>`
+    : ''
+  const dieselRow = s.dieselPrice != null
+    ? `<div style="font-size:12px;color:#374151"><span style="color:#9ca3af">경유 </span><span style="font-weight:600">${fmtPrice(s.dieselPrice)}</span></div>`
+    : ''
+  return `<div style="background:#fff;border:1px solid #d1d5db;border-radius:10px;padding:10px 14px;box-shadow:0 4px 12px rgba(0,0,0,.15);min-width:150px;font-family:sans-serif;position:relative;cursor:default">
+  <div style="font-weight:700;font-size:14px;color:#111;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px">${s.name}</div>
+  <div style="font-size:12px;color:#6b7280;margin-bottom:5px">${s.brand}</div>
+  ${gasolineRow}${dieselRow}
+  <div style="font-size:11px;color:#9ca3af;margin-top:4px">${fmtDist(s.distance)}</div>
   <div style="position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:8px solid #d1d5db"></div>
   <div style="position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #fff"></div>
 </div>`

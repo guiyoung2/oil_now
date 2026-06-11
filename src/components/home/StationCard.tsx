@@ -6,7 +6,19 @@ interface Props {
   onClick: () => void
 }
 
+function fmtPrice(price: number | null | undefined): string {
+  return price != null ? price.toLocaleString() + '원' : '—'
+}
+
 export function StationCard({ station, isLowest, onClick }: Props) {
+  // 선택 유종(price)과 일치하는 행에 최저가 강조 적용
+  const gasolineIsLowest = isLowest && station.price != null && station.price === station.gasolinePrice
+  const dieselIsLowest =
+    isLowest &&
+    station.price != null &&
+    station.price === station.dieselPrice &&
+    station.price !== station.gasolinePrice
+
   return (
     <button
       onClick={onClick}
@@ -23,14 +35,19 @@ export function StationCard({ station, isLowest, onClick }: Props) {
           {Math.round(station.distance)}m · {station.brand}
         </div>
       </div>
-      <div className="shrink-0 text-right ml-3">
-        {station.price != null ? (
-          <span className={`font-bold text-sm ${isLowest ? 'text-blue-600' : 'text-gray-900'}`}>
-            {station.price.toLocaleString()}원
+      <div className="shrink-0 text-right ml-3 space-y-0.5">
+        <div className="flex items-center gap-1.5 justify-end">
+          <span className="text-[10px] text-gray-400">휘발유</span>
+          <span className={`font-bold text-sm ${gasolineIsLowest ? 'text-blue-600' : 'text-gray-900'}`}>
+            {fmtPrice(station.gasolinePrice)}
           </span>
-        ) : (
-          <span className="text-sm text-gray-400">—</span>
-        )}
+        </div>
+        <div className="flex items-center gap-1.5 justify-end">
+          <span className="text-[10px] text-gray-400">경유</span>
+          <span className={`text-sm ${dieselIsLowest ? 'text-blue-600' : 'text-gray-700'}`}>
+            {fmtPrice(station.dieselPrice)}
+          </span>
+        </div>
       </div>
     </button>
   )

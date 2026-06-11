@@ -21,4 +21,6 @@ export interface StationWithPrice extends Station {
   distance: number
   price: number | null
   latestDate: string | null
+  gasolinePrice: number | null
+  dieselPrice: number | null
 }

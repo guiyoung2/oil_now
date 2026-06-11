@@ -15,6 +15,8 @@ const station: StationWithPrice = {
   distance: 340,
   price: 1680,
   latestDate: '2026-06-10',
+  gasolinePrice: 1680,
+  dieselPrice: 1520,
 }
 
 describe('StationCard', () => {
@@ -25,8 +27,8 @@ describe('StationCard', () => {
     expect(screen.getByText(/1,680원/)).toBeInTheDocument()
   })
 
-  test('price null → — 표시', () => {
-    render(<StationCard station={{ ...station, price: null }} isLowest={false} onClick={() => {}} />)
+  test('경유 가격 없을 때 — 표시', () => {
+    render(<StationCard station={{ ...station, dieselPrice: null }} isLowest={false} onClick={() => {}} />)
     expect(screen.getByText('—')).toBeInTheDocument()
   })
 

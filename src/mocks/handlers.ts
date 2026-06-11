@@ -29,6 +29,8 @@ export const handlers = [
           distance: haversineMeters(lat, lng, shiftedLat, shiftedLng),
           price: snap?.price ?? null,
           latestDate: snap?.date ?? null,
+          gasolinePrice: null,
+          dieselPrice: null,
         }
       })
       .filter((s) => s.price !== null)

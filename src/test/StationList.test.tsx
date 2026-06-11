@@ -28,6 +28,8 @@ function makeStation(id: string, price: number | null, distance: number): Statio
     distance,
     price,
     latestDate: price ? '2026-06-10' : null,
+    gasolinePrice: price,
+    dieselPrice: null,
   }
 }
 
