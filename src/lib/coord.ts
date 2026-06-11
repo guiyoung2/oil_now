@@ -19,6 +19,8 @@ const DZ = 681.46;
 // WGS84 ellipsoid
 const WGS84_A = 6378137.0;
 const WGS84_F = 1 / 298.257223563;
+const WGS84_B = WGS84_A * (1 - WGS84_F);
+const WGS84_E2 = 2 * WGS84_F - WGS84_F ** 2;
 
 // Meridian arc length from equator to φ on Bessel ellipsoid (Snyder series)
 function meridianArc(phi: number): number {
@@ -95,6 +97,75 @@ function molodenskyShift(phi: number, lambda: number): [number, number] {
   const dLambda = (-DX * sinLam + DY * cosLam) / (N * cosPhi);
 
   return [phi + dPhi, lambda + dLambda];
+}
+
+// Molodensky datum shift: WGS84 → Bessel/Tokyo (inverse)
+function molodenskyInverse(phi: number, lambda: number): [number, number] {
+  const e2 = WGS84_E2;
+  const sinPhi = Math.sin(phi);
+  const cosPhi = Math.cos(phi);
+  const sinLam = Math.sin(lambda);
+  const cosLam = Math.cos(lambda);
+
+  const N = WGS84_A / Math.sqrt(1 - e2 * sinPhi ** 2);
+  const M = WGS84_A * (1 - e2) / (1 - e2 * sinPhi ** 2) ** 1.5;
+  const da = BESSEL_A - WGS84_A;
+  const df = BESSEL_F - WGS84_F;
+
+  // Negate DX/DY/DZ for inverse; swap ellipsoid for da/df
+  const dPhi = (
+    DX * sinPhi * cosLam
+    + DY * sinPhi * sinLam
+    - DZ * cosPhi
+    + da * (N * e2 * sinPhi * cosPhi) / WGS84_A
+    + df * (M * (WGS84_A / WGS84_B) + N * (WGS84_B / WGS84_A)) * sinPhi * cosPhi
+  ) / M;
+
+  const dLambda = (DX * sinLam - DY * cosLam) / (N * cosPhi);
+
+  return [phi + dPhi, lambda + dLambda];
+}
+
+// TM forward projection: Bessel (φ, λ) in radians → KATEC (E, N)
+function tmForward(phi: number, lambda: number): [number, number] {
+  const e2 = BESSEL_E2;
+  const ep2 = e2 / (1 - e2);
+
+  const sinPhi = Math.sin(phi);
+  const cosPhi = Math.cos(phi);
+  const tanPhi = Math.tan(phi);
+
+  const N = BESSEL_A / Math.sqrt(1 - e2 * sinPhi ** 2);
+  const T = tanPhi ** 2;
+  const C = ep2 * cosPhi ** 2;
+  const A = cosPhi * (lambda - LNG0);
+  const M = meridianArc(phi);
+  const M0 = meridianArc(LAT0);
+
+  const easting = K0 * N * (
+    A
+    + (1 - T + C) * A ** 3 / 6
+    + (5 - 18 * T + T ** 2 + 72 * C - 58 * ep2) * A ** 5 / 120
+  ) + E0;
+
+  const northing = K0 * (
+    M - M0
+    + N * tanPhi * (
+      A ** 2 / 2
+      + (5 - T + 9 * C + 4 * C ** 2) * A ** 4 / 24
+      + (61 - 58 * T + T ** 2 + 600 * C - 330 * ep2) * A ** 6 / 720
+    )
+  ) + N0;
+
+  return [easting, northing];
+}
+
+export function wgs84ToKatec(lat: number, lng: number): { x: number; y: number } {
+  const phi = lat * (Math.PI / 180);
+  const lambda = lng * (Math.PI / 180);
+  const [phiBessel, lambdaBessel] = molodenskyInverse(phi, lambda);
+  const [x, y] = tmForward(phiBessel, lambdaBessel);
+  return { x, y };
 }
 
 export function katecToWgs84(x: number, y: number): { lat: number; lng: number } {

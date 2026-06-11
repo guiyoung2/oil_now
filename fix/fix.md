@@ -1,7 +1,7 @@
 # Fix 추적 — oil_now
 
 > Phase 1 구현 중 발견된 이슈 및 수정 기록
-> 마지막 갱신: 2026-06-10
+> 마지막 갱신: 2026-06-11
 
 ---
 
@@ -22,7 +22,7 @@
 | 11 | `pipeline` | Step 3 검토 | major | 미결 | 좌표 변환 코드(`coord.ts`와 `index.ts`)가 완전 중복. 테스트는 coord.ts만 검증하므로 프로덕션 복사본 drift 가능. Phase 2에서 단일 출처화 검토. |
 | 12 | `pipeline` | Step 3 검토 | critical | ✅ 해소 | pg_cron 마이그레이션의 service_role 키 평문 저장 문제. Supabase Vault 시크릿 참조 방식으로 전환 완료. git 커밋 안전. |
 | 13 | `pipeline` | Step 3 검토 | critical | ✅ 해소 | collection_logs status 오분류: API HTTP 200이나 rows=0이어도 success 기록 문제. totalRows===0 → partial, DB write 에러 failures에 반영 완료. |
-| 14 | `pipeline` | Step 3 검토 | major | 미결 | lowTop10.do 시도 필터 파라미터명(siGunGu), 응답 경로(RESULT.OIL), cnt=20 의미가 실호출로 미검증. 파라미터 오류 시 전체 시도 동일 결과 반환 가능. 최초 배포 후 1회 실호출로 검증 필요. |
+| 14 | `pipeline` | Step 3 검토 | major | ✅ 해소(S10) | aroundAll.do 실호출 검증 완료(2026-06-11). 응답 경로 `RESULT.OIL[]` 확인. aroundAll.do 응답 필드: UNI_ID/OS_NM/POLL_DIV_CD/PRICE(숫자)/DISTANCE(m)/GIS_X_COOR/GIS_Y_COOR. lowTop10.do(collect-prices)의 siGunGu/cnt는 배포 시 함께 확인 권장. |
 | 15 | `pipeline` | Step 3 검토 | major | ✅ 해소 | Edge Function 실행시간 한도 초과 위험. 조합 단위 배치 upsert로 DB 왕복 수 대폭 감소(N→2/조합). 배포 후 실행시간 실측 권장. |
 
 ---
@@ -37,6 +37,11 @@
 | S4 | Vercel 배포 빌드 실패 수정 — `vite.config.ts`의 `test` 설정 타입이 Vite `defineConfig`에서 인식되지 않던 문제를 Vitest config helper로 전환 | vite.config.ts, plan/plan.md, fix/fix.md | npm run build ✅ / npm run test -- --run ✅ | 2026-06-10 |
 | S5 | Task 4 Zustand filterStore 구현 — TDD 방식. RED: 테스트 파일 생성, FAIL 확인. GREEN: 최소 코드로 3 tests PASS. 초기값(gasoline, distance), setFuelType, setSortOrder | src/store/filterStore.ts, src/test/filterStore.test.ts | vitest 3/3 PASS ✅ / npm run test 전체 16/16 PASS ✅ / git commit 230efa0 ✅ | 2026-06-10 |
 | S6 | Step 4 홈 화면 구현 완료 (서브에이전트 11-Task) — react-router-dom/supabase 설치, 타입/유틸, MSW, filterStore, useGeolocation/useStations, FilterBar/StationCard/EmptyState/StationList/KakaoMap, HomePage + App.tsx 조립 | 17개 신규 파일 + index.html, src/main.tsx 수정 | 10 files 35 tests ✅ / tsc --noEmit ✅ / 커밋 6a5f5d9 | 2026-06-10 |
+| S7 | 카카오맵 로딩 실패 진단·해소 — 신규 앱은 2024.12 정책상 카카오맵 미심사라 SDK 403(disabled OPEN_MAP_AND_LOCAL). 개발용으로 이미 권한 보유한 기존 앱(VibeBoard) JS 키 재사용으로 즉시 해소. KakaoMap을 `kakao.maps.load()` 콜백 패턴으로 보강, MSW localhost 노이즈 억제 | .env.local, src/components/home/KakaoMap.tsx, src/main.tsx | curl Referer 200 + SDK 본문 확인 ✅ / 브라우저 지도 표시 ✅ | 2026-06-11 |
+| S8 | Step 4.5 탭 네비게이션 + 실시간 유가 mock 대시보드 — 상단 3탭(실시간 유가/주변 주유소/유가 뉴스), 첫 화면=실시간 유가, 주변 주유소=`/nearby`. AvgPriceCard·PriceTrendChart(Recharts)·useAvgPrices(mock)·avgPriceFixtures. TDD(RED→GREEN) 5개 단위. 부수: build 차단하던 기존 `global` 타입 에러(S6 유입, tsc --noEmit만 검증돼 미발견)를 `globalThis`로 수정 | 신규 8개(TabBar/MainLayout/PricesPage/NewsPage/AvgPriceCard/PriceTrendChart/useAvgPrices/avgPriceFixtures + types/avgPrice) / 수정 App.tsx·HomePage·smoke.test·useGeolocation.test | 14 files 45 tests ✅ / tsc --noEmit ✅ / npm run build ✅ | 2026-06-11 |
+| S9 | dev 콘솔 정리 + 주변 주유소 리스트 표시 — (1) MSW handler가 요청 위치(lat/lng 범위)를 파싱해 fixtures를 그 주변으로 평행이동 → 서울 밖에서도 리스트/마커 표시. (2) PriceTrendChart를 ResponsiveContainer→ResizeObserver 직접 측정으로 변경해 width(-1) 경고 제거(+jsdom ResizeObserver mock). (3) onUnhandledRequest를 Supabase 도메인만 경고하도록 좁혀 카카오 지도 타일/마커(daumcdn) 등 외부 요청 노이즈 제거 | src/mocks/handlers.ts, src/components/prices/PriceTrendChart.tsx, src/test/setup.ts, src/main.tsx | 14 files 45 tests ✅ / npm run build ✅ | 2026-06-11 |
+| S10 | Step 5 설계 — 실시간 주변 주유소(Opinet aroundAll.do) + 마커 말풍선 오버레이. brainstorming으로 데이터 소스(Opinet 실시간 반경조회)·UI(CustomOverlay 말풍선) 확정. aroundAll.do 실제 키로 실호출 검증 → 응답 구조 확정(가격 PRICE·거리 DISTANCE·KATEC좌표 포함, 주소·셀프 미제공), fix #14 해소. WGS84→KATEC 임시 역변환 정확도 확인. 구현은 새 세션(plan.md Step 5 작업순서 1~6). **코드 변경 없음(설계·문서만)** | plan/plan.md, fix/fix.md | aroundAll.do 200 + RESULT.OIL 파싱 확인 ✅ | 2026-06-11 |
+| S11 | Step 5 구현 — TDD로 `wgs84ToKatec`(역 Molodensky+TM forward) 추가, `around-stations` Edge Function 작성·배포, `useStations` → Edge Function 전환, MSW handler를 `around-stations` 형태로 교체, `KakaoMap` 마커 클릭 말풍선 오버레이(CustomOverlay: 상호/브랜드/현재가/거리)로 전환. 왕복 테스트 3곳(서울/부산/제주) 오차 < 5m. 실호출 확인(서울 좌표 → 실주유소 응답). | src/lib/coord.ts, src/test/coord.test.ts, supabase/functions/around-stations/index.ts, src/hooks/useStations.ts, src/mocks/handlers.ts, src/components/home/KakaoMap.tsx, src/pages/HomePage.tsx | 49/49 tests ✅ / tsc --noEmit ✅ / npm run build ✅ | 2026-06-11 |
 
 ---
 

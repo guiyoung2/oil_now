@@ -1,9 +1,9 @@
 # Phase 1 실행 계획 — oil_now
 
 > 생성일: 2026-06-03
-> 마지막 갱신: 2026-06-10
+> 마지막 갱신: 2026-06-11
 > 현재 Phase: Phase 1 — MVP
-> 현재 Step: Step 5 (미시작)
+> 현재 Step: Step 6 QA 패스
 
 ---
 
@@ -15,7 +15,8 @@
 | Step 2 | Supabase 스키마 | ✅ 완료 |
 | Step 3 | collect-prices Edge Function | 🔶 구현 완료 (배포 전) |
 | Step 4 | 홈 화면 | ✅ 완료 |
-| Step 5 | 주유소 상세 화면 | ⬜ 미시작 |
+| Step 4.5 | 탭 네비게이션 + 실시간 유가 mock 대시보드 | ✅ 완료 |
+| Step 5 | 실시간 주변 주유소(Opinet) + 말풍선 오버레이 | ✅ 완료 |
 | Step 6 | QA 패스 | ⬜ 미시작 |
 
 ---
@@ -148,34 +149,97 @@
 - [x] 유종 토글 RTL 테스트 통과 (FilterBar.test.tsx 4개 통과)
 - [x] 정렬(거리/가격) RTL 테스트 통과 (FilterBar.test.tsx 통과)
 
+**다음 Step:** Step 4.5 탭 네비게이션 + 실시간 유가 mock 대시보드
+
+---
+
+## Step 4.5: 탭 네비게이션 + 실시간 유가 mock 대시보드
+
+**상태:** ✅ 완료 (2026-06-11)
+
+**배경:** 홈이 지도+유종 토글만 노출되어 정보 구조가 빈약. 상단 탭으로 섹션을 분리하고, 첫 화면을 실시간 유가로 전환.
+
+**범위:**
+- 상단 3탭 네비게이션 (실시간 유가 / 주변 주유소 / 유가 뉴스)
+- 라우팅 재구성: `/`=실시간 유가, `/nearby`=주변 주유소(기존 HomePage), `/news`=유가 뉴스
+- 실시간 유가 대시보드 (mock): 전국 평균가 카드 3종(휘발유/경유/LPG) + 전일 대비 변동 + 최근 7일 추이 차트(Recharts)
+- `useAvgPrices` 훅으로 데이터 추상화 — Phase 2에서 훅 내부만 Supabase 쿼리로 교체(UI 불변)
+- 유가 뉴스 탭: "준비 중(Phase 2)" placeholder
+- `/stations/:id` 상세는 탭바 밖 유지
+
+**범위 경계 (Phase 2 유지):**
+- 평균가 데이터 수집 백엔드(`collect-regional-avg`, `regional_avg` 테이블) — Phase 2
+- 뉴스 크롤링(`collect-news`, `news` 테이블) — Phase 2
+
+**구현 파일:**
+- 신규: `components/layout/TabBar.tsx`, `components/layout/MainLayout.tsx`, `pages/PricesPage.tsx`, `pages/NewsPage.tsx`, `components/prices/AvgPriceCard.tsx`, `components/prices/PriceTrendChart.tsx`, `hooks/useAvgPrices.ts`, `mocks/avgPriceFixtures.ts`
+- 수정: `App.tsx`(라우팅), `HomePage.tsx`(h-svh→flex-1)
+
+**완료 기준:**
+- 3탭 전환 동작, 첫 화면 실시간 유가
+- 실시간 유가 대시보드 평균가 카드 + 추이 차트 렌더 (mock)
+- 주변 주유소(`/nearby`) 기존 기능 회귀 없음
+- 뉴스 placeholder crash 없음
+- `npm run test` 전체 통과, `tsc --noEmit` 오류 없음
+
+**검증 체크리스트:**
+- [x] TabBar 3탭 렌더 + 활성 탭 aria-current RTL 테스트 (TabBar.test.tsx 3개)
+- [x] AvgPriceCard 가격·변동 렌더 테스트 (AvgPriceCard.test.tsx 4개)
+- [x] PricesPage mock 대시보드 렌더 + 차트 영역 (PricesPage.test.tsx 2개)
+- [x] NewsPage placeholder 렌더 테스트 (NewsPage.test.tsx 1개)
+- [x] 주변 주유소 기존 테스트 회귀 없음 (전체 14 files 45 tests PASS)
+- [x] tsc --noEmit / npm run build 통과 (build 차단하던 기존 global 타입 에러도 해소 — fix.md S8)
+- [ ] 브라우저 실물 확인: 탭 전환·차트 표시 (사용자 확인 대기)
+
 **다음 Step:** Step 5 주유소 상세 화면
 
 ---
 
-## Step 5: 주유소 상세 화면
+## Step 5: 실시간 주변 주유소 (Opinet 실연동) + 말풍선 오버레이
 
-**상태:** ⬜ 미시작
+**상태:** ✅ 완료 (2026-06-11)
+
+**배경:** 기존 홈은 mock 주유소(서울 고정 좌표)라 실제 주변 주유소가 아님. Opinet `aroundAll.do`로 실시간 반경 조회 + 마커 클릭 시 지도 위 말풍선 상세.
+
+**검증 완료 (fix.md #14 해소, S10):** `aroundAll.do` 1회 호출로 주유소+현재가(PRICE 숫자)+거리(DISTANCE m)+KATEC좌표(GIS_X/Y_COOR) 반환 확인. **주소·셀프여부는 미제공.**
+
+**전제 (이미 준비됨):**
+- Opinet 키: Supabase Edge Function secret `OPINET_API_KEY` 등록 완료 (키 값: F260610744)
+- 응답 필드: `UNI_ID, OS_NM, POLL_DIV_CD(브랜드코드), PRICE, DISTANCE, GIS_X_COOR, GIS_Y_COOR`
+- 응답 경로: `RESULT.OIL[]` / 파라미터: `code, x, y, radius(≤5000), sort(1:가격), prodcd, out=json`
+- 유종 매핑: `gasoline→B027 / diesel→D047 / lpg→K015` (collect-prices FUEL_MAP 재사용)
+- 브랜드 매핑: collect-prices BRAND_MAP 재사용 (SKE/GSC/HDO/SOL...)
 
 **범위:**
-- 현재가 표시
-- 가격 변동 차트 (Recharts, 누적 price_snapshots)
-- 빈 히스토리 empty state ("데이터 누적 중" 안내)
-- 즐겨찾기 ☆ 토글 버튼 (localStorage 저장/불러오기, 로그인 없이)
-- 즐겨찾기 목록 화면 없음 → Phase 2 보류
-- 상세 진입: 리스트 클릭 + URL 파라미터 (딥링크 고려)
+- Edge Function `around-stations`: `lat/lng/fuel` → `wgs84ToKatec` → `aroundAll.do(radius=5000, prodcd)` → 정규화(KATEC→WGS84, 브랜드 매핑, `address=''·is_self=false` 채움) → `StationWithPrice[]` 반환
+- `wgs84ToKatec` 좌표 역변환 (`coord.ts`) + 왕복 테스트
+- `useStations`: Supabase 테이블 쿼리 → `around-stations` 호출로 전환 (서버 DISTANCE 사용, 클라 haversine 제거)
+- `KakaoMap`: 마커 클릭 시 `navigate('/stations/:id')` **제거** → 말풍선 오버레이(CustomOverlay: 상호/브랜드/현재가/거리), 다른 곳 클릭 시 닫힘
+- `StationList`/`StationCard`/정렬: `StationWithPrice` 형태 유지로 거의 그대로
+
+**범위 밖 (후속/Phase 2):**
+- 가격 변동 차트, 즐겨찾기 ☆ 토글 (말풍선 요약엔 미포함 — 기존 Step 5 상세화면 항목은 Phase 2 보류로 이관)
+
+**작업 순서 (TDD):**
+1. `wgs84ToKatec` + 왕복 테스트 → 검증: `katecToWgs84(wgs84ToKatec(37.5665,126.978)) ≈ (37.5665,126.978)` 오차 < 수 m
+2. `around-stations` Edge Function 작성 (`supabase/functions/around-stations/index.ts`)
+3. 배포 (Supabase 대시보드 또는 supabase MCP 대행) + 실호출 1회 확인
+4. MSW handler를 `around-stations` 응답 형태로 교체 + `useStations` 전환
+5. `KakaoMap` 말풍선 오버레이 (CustomOverlay)
+6. 검증 (`npm run test`, `npm run build`, 브라우저 실물)
 
 **완료 기준:**
-- 히스토리 데이터 없을 때 crash 없음
-- localStorage 즐겨찾기 저장/불러오기 정상 (새로고침 유지)
-- 차트 로딩/empty 상태 처리
+- 실제 내 위치 주변 주유소가 거리순 리스트 + 지도 마커로 표시
+- 마커 클릭 시 지도 위 말풍선에 상호/브랜드/현재가/거리
+- `around-stations` 배포되어 실데이터 반환
+- `npm run test` / `npm run build` 통과
 
 **검증 체크리스트:**
-- [ ] 빈 히스토리 empty state 렌더링 (crash 없음)
-- [ ] localStorage 즐겨찾기 새로고침 후 유지
-- [ ] 차트 aria-label 존재
-- [ ] 색상 대비 4.5:1 이상
-- [ ] 차트 로딩 스켈레톤/스피너 존재
-- [ ] 즐겨찾기 토글 aria-pressed 또는 aria-label 상태 반영
+- [x] `wgs84ToKatec` 왕복 테스트 통과 (서울/부산/제주 3개, 오차 < 5m)
+- [x] `around-stations` 배포 + 실호출 200 + 정규화 응답 확인 (서울 기준 실주유소 반환)
+- [x] `useStations` Edge Function 전환 (MSW mock + 실연동)
+- [ ] 마커 클릭 → 말풍선 표시 (브라우저 수동 확인)
+- [x] `npm run test` 전체 통과 (49 tests) / `npm run build` 통과
 
 **다음 Step:** Step 6 QA 패스
 
@@ -232,7 +296,7 @@
 
 ## 다음 작업
 
-Step 4 홈 화면 구현 완료. Step 5 주유소 상세 화면으로 진행.
-- 테스트: 10 files, 35 tests PASS
-- typecheck: 오류 없음
-- 미결 이슈: #11(coord 코드 중복), #14(API 파라미터 실호출 검증) — Phase 2 예정
+Step 5 완료(2026-06-11). 다음 단계는 Step 6 QA 패스.
+- `npm run test` 49/49 통과, `npm run build` 통과, tsc --noEmit 오류 없음.
+- 브라우저 수동 확인 잔여: 마커 클릭 말풍선 표시 (사용자 확인 대기).
+- 미결 이슈: #11(coord 코드 중복 — around-stations/collect-prices 모두 좌표 변환 인라인) — Phase 2 단일 출처화 예정.

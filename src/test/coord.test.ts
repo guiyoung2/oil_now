@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { katecToWgs84 } from "../lib/coord.ts";
+import { katecToWgs84, wgs84ToKatec } from "../lib/coord.ts";
 
 describe("katecToWgs84", () => {
   it("TM 원점(400000, 600000) → WGS84 약 38°N 128°E", () => {
@@ -25,5 +25,45 @@ describe("katecToWgs84", () => {
     expect(lat).toBeLessThan(35);
     expect(lng).toBeGreaterThan(125);
     expect(lng).toBeLessThan(128);
+  });
+});
+
+describe("wgs84ToKatec", () => {
+  function haversineM(lat1: number, lng1: number, lat2: number, lng2: number): number {
+    const R = 6371000;
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLng = (lng2 - lng1) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  it("서울(37.5665, 126.978) 왕복 오차 5m 이하", () => {
+    const { x, y } = wgs84ToKatec(37.5665, 126.978);
+    const { lat, lng } = katecToWgs84(x, y);
+    expect(haversineM(37.5665, 126.978, lat, lng)).toBeLessThan(5);
+  });
+
+  it("부산(35.1796, 129.0756) 왕복 오차 5m 이하", () => {
+    const { x, y } = wgs84ToKatec(35.1796, 129.0756);
+    const { lat, lng } = katecToWgs84(x, y);
+    expect(haversineM(35.1796, 129.0756, lat, lng)).toBeLessThan(5);
+  });
+
+  it("제주(33.4996, 126.5312) 왕복 오차 5m 이하", () => {
+    const { x, y } = wgs84ToKatec(33.4996, 126.5312);
+    const { lat, lng } = katecToWgs84(x, y);
+    expect(haversineM(33.4996, 126.5312, lat, lng)).toBeLessThan(5);
+  });
+
+  it("서울 변환 결과가 KATEC 유효 범위(양수 정수) 내에 있음", () => {
+    const { x, y } = wgs84ToKatec(37.5665, 126.978);
+    expect(x).toBeGreaterThan(0);
+    expect(y).toBeGreaterThan(0);
+    expect(x).toBeLessThan(1000000);
+    expect(y).toBeLessThan(1000000);
   });
 });

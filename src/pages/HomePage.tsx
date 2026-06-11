@@ -30,13 +30,12 @@ export function HomePage() {
   )
 
   return (
-    <div className="flex flex-col h-svh">
+    <div className="flex flex-1 flex-col min-h-0">
       {activeLat !== null && activeLng !== null ? (
         <KakaoMap
           lat={activeLat}
           lng={activeLng}
           stations={stations}
-          onMarkerClick={(id) => navigate(`/stations/${id}`)}
         />
       ) : (
         <div
