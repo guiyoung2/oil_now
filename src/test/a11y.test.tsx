@@ -42,7 +42,12 @@ test('AvgPriceCard: 보합 delta axe 위반 없음', async () => {
 })
 
 test('NewsPage: axe 위반 없음', async () => {
-  const { container } = render(<NewsPage />)
+  const qc = new QueryClient()
+  const { container } = render(
+    <QueryClientProvider client={qc}>
+      <NewsPage />
+    </QueryClientProvider>,
+  )
   await checkA11y(container)
 })
 

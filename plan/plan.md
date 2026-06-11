@@ -2,8 +2,8 @@
 
 > 생성일: 2026-06-03
 > 마지막 갱신: 2026-06-12
-> 현재 Phase: **Phase 2-A ✅ 완료(2026-06-12)** → Phase 2-B(유가 뉴스) 준비
-> 현재 Step: Phase 2-A 실시간 유가 실데이터화 완료. regional_avg 테이블 + collect-regional-avg Edge Function + useAvgPrices Supabase 전환. 다음은 Phase 2-B.
+> 현재 Phase: **Phase 2-B 유가 뉴스 구현 완료**
+> 현재 Step: Phase 2-B 완료 (2026-06-12, S18·S19). news 테이블·collect-news·pg_cron(S18 백엔드) + useNews·NewsCard·NewsPage(S19 프론트엔드) 모두 완료. 93/93 tests PASS.
 
 ---
 
@@ -327,13 +327,55 @@ Phase 1 기능은 완료됐으나, 데이터 신뢰성·코드 품질 측면에�
 - 7일 추이 데이터는 매일 적재 누적 후 실제 7점이 됨 (오늘은 1~N점)
 
 ### Phase 2-B: 유가 뉴스 (우선순위 2)
-현재 NewsPage는 "준비 중" placeholder.
 
-- 뉴스 소스 결정 (RSS/크롤링 대상) — 착수 시 brainstorming 필요
-- `news` 테이블: `id, title, url, source, published_at, summary`
-- `collect-news` Edge Function: 소스 수집 → `news` upsert, pg_cron
-- NewsPage: placeholder → 뉴스 리스트 UI
-- **완료 기준:** 뉴스 리스트 실데이터 렌더, `npm run test`/`build` 통과
+**설계 확정 (2026-06-12, brainstorming):** `docs/superpowers/specs/2026-06-12-phase2b-news-design.md`
+
+**결정 사항:**
+| 항목 | 결정 |
+|------|------|
+| 뉴스 소스 | Google News RSS — `유가+기름값` 단일 키워드 |
+| 수집 방식 | DB 경유 (collect-news → news 테이블 → Frontend) |
+| 수집 주기 | pg_cron `0 0,12 * * *` (KST 0시·12시) |
+| summary | RSS description 150자 truncate |
+| UI | 카드형, 최신 20건 전체 로드, 스켈레톤 로딩 |
+| 외부 링크 | 새 탭 (`target="_blank" rel="noopener noreferrer"`) |
+
+**범위:**
+
+_데이터 계층_
+- `news` 테이블 migration: `id(uuid PK), title, url(UNIQUE), source, published_at, summary, collected_at`
+- RLS: 읽기 공개, 쓰기 service_role 전용
+- `_shared/parseNews.ts` 단일 출처 파서 (coord·parseAvgPrice 패턴 동일)
+- `src/lib/parseNews.ts` re-export 배럴
+- `collect-news` Edge Function: RSS fetch → 파싱 → `ON CONFLICT (url) DO NOTHING` upsert → `collection_logs` 3-status
+- pg_cron migration: `0 0,12 * * *` (KST 0시·12시)
+
+_Frontend_
+- `useNews` 훅: Supabase REST `published_at DESC` 최신 20건 (TanStack Query, useAvgPrices 패턴)
+- `NewsCard` 컴포넌트: 언론사 + 경과시간 + 제목 + summary 카드
+- `NewsPage`: placeholder 제거 → useNews + NewsCard 리스트, 스켈레톤 로딩, 빈 상태
+- MSW handler 추가: `news` 테이블 GET → fixture 반환
+
+_테스트_
+- `src/test/parseNews.test.ts`: RSS XML fixture 파싱 단위 테스트
+- `src/test/useNews.test.tsx`: MSW mock 훅 테스트
+- `src/test/NewsCard.test.tsx`: 카드 렌더·링크 테스트
+- `src/test/NewsPage.test.tsx`: 전체 렌더 + 빈 상태 + 스켈레톤 테스트
+
+**작업 순서 (TDD):**
+1. ✅ `news` 테이블 migration 적용 (Supabase MCP) — 2026-06-12 S18
+2. ✅ `_shared/parseNews.ts` TDD (RSS XML fixture → 파싱) — 4/4 PASS, 2026-06-12 S18
+3. ✅ `collect-news` Edge Function 작성·배포·실호출 검증 — rows=20, status=success, 2026-06-12 S18
+4. ✅ pg_cron migration 적용 (`0 0,12 * * *`) — 2026-06-12 S18
+5. ✅ `useNews` 훅 TDD (MSW mock) — 2/2 PASS, 2026-06-12 S19
+6. ✅ `NewsCard` + `NewsPage` UI 구현 (스켈레톤 포함) — 4/4+3/3 PASS, 2026-06-12 S19
+7. ✅ 검증 (`npm run test` 93/93, `npm run build` 통과) — 2026-06-12 S19
+
+**완료 기준:**
+- 뉴스 리스트 실데이터 렌더 (collect-news 실호출 후)
+- 카드 클릭 → 새 탭 외부 링크 동작
+- 스켈레톤 로딩 → 데이터 전환 동작
+- `npm run test` / `npm run build` 통과
 
 ### 범위 밖 (현재 보류 — 필요성 재검토 시 부활)
 | 항목 | 유형 | 사유 |
@@ -346,16 +388,22 @@ Phase 1 기능은 완료됐으나, 데이터 신뢰성·코드 품질 측면에�
 
 ## 다음 작업
 
-**현재 위치:** Phase 2-A 완료 (2026-06-12, S17). **다음: Phase 2-B 유가 뉴스 착수 준비.**
+**현재 위치:** Phase 2-B 완료 (2026-06-12, S18·S19). **Phase 2 전체 완료.**
 
 1. ✅ 잔여 1: `coord.ts` 단일 출처화 (2026-06-12, S14)
 2. ✅ 잔여 2: Edge Function 재배포 + collect-prices 실호출 검증 (2026-06-12, S15)
 3. ✅ 잔여 3: 브라우저 실물 확인 (2026-06-12, S16)
 4. ✅ Phase 2-A: 실시간 유가 실데이터화 (2026-06-12, S17)
-5. **다음: Phase 2-B** — 유가 뉴스 소스 결정 → `news` 테이블 + `collect-news` + NewsPage UI
+5. ✅ Phase 2-B 설계 확정 (2026-06-12, brainstorming)
+6. ✅ Phase 2-B 백엔드: `news` 테이블 + `_shared/parseNews.ts` + `collect-news` Edge Function + pg_cron (2026-06-12, S18)
+7. ✅ Phase 2-B 프론트엔드: `useNews` + `NewsCard` + `NewsPage` TDD 구현 (2026-06-12, S19)
+
+**미결 사항:**
+- fix.md #17: pg_cron `collect-regional-avg-daily` — Supabase pg_cron 확장 활성화 후 migration 재적용 필요 (minor)
 
 ### 현재 데이터 현황
 - 개발 모드(npm run dev): MSW가 `around-stations`(주변 주유소)·`regional_avg`(평균가) 요청을 가로채 fixture 반환
 - 프로덕션 빌드 / Supabase 직접 호출: Opinet 실데이터(`around-stations` Edge Function) + DB 실데이터(`regional_avg`)
 - `collect-prices`: pg_cron 미적용, 수동 트리거 가능
 - `collect-regional-avg`: 배포 완료(v1), 오늘 5개 유종 전국 평균가 적재. pg_cron 스케줄 미결(fix.md #17)
+- `collect-news`: 배포 완료(v2), 실호출 rows=20 status=success. pg_cron `0 0,12 * * *` 스케줄 적용(cron_collect_news migration)
