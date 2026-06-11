@@ -398,12 +398,11 @@ _테스트_
 6. ✅ Phase 2-B 백엔드: `news` 테이블 + `_shared/parseNews.ts` + `collect-news` Edge Function + pg_cron (2026-06-12, S18)
 7. ✅ Phase 2-B 프론트엔드: `useNews` + `NewsCard` + `NewsPage` TDD 구현 (2026-06-12, S19)
 
-**미결 사항:**
-- fix.md #17: pg_cron `collect-regional-avg-daily` — Supabase pg_cron 확장 활성화 후 migration 재적용 필요 (minor)
+**미결 사항:** 없음. Phase 2 전체 완료.
 
 ### 현재 데이터 현황
 - 개발 모드(npm run dev): MSW가 `around-stations`(주변 주유소)·`regional_avg`(평균가) 요청을 가로채 fixture 반환
 - 프로덕션 빌드 / Supabase 직접 호출: Opinet 실데이터(`around-stations` Edge Function) + DB 실데이터(`regional_avg`)
 - `collect-prices`: pg_cron 미적용, 수동 트리거 가능
-- `collect-regional-avg`: 배포 완료(v1), 오늘 5개 유종 전국 평균가 적재. pg_cron 스케줄 미결(fix.md #17)
+- `collect-regional-avg`: 배포 완료(v1), 오늘 5개 유종 전국 평균가 적재. pg_cron 스케줄 활성화 완료(`collect-regional-avg-daily`, 매일 10:30 KST)
 - `collect-news`: 배포 완료(v2), 실호출 rows=20 status=success. pg_cron `0 0,12 * * *` 스케줄 적용(cron_collect_news migration)
