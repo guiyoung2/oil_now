@@ -270,9 +270,9 @@
 **검증 체크리스트:**
 - [x] `npm run test` 전체 통과 (177/177, 48 files)
 - [x] `npm run build` TypeScript + Vite 빌드 통과
-- [ ] Lighthouse 측정 결과 파일 존재 — `npm run build && npm run preview` 후 `npm run lighthouse` 실행 필요 (로컬 수동)
-- [ ] Lighthouse Performance ≥ 70 (수동 확인 필요)
-- [ ] Lighthouse Accessibility ≥ 90 (수동 확인 필요)
+- [x] Lighthouse 측정 결과 파일 존재 (`lighthouse-report2`, 2026-06-11 프로덕션 빌드)
+- [x] Lighthouse Performance ≥ 70 → **96** (프로덕션 빌드)
+- [x] Lighthouse Accessibility ≥ 90 → **100** (color-contrast 포함 전 항목 통과)
 - [x] 터치 타깃 ≥ 44px 전체 화면 (touch-targets.test.tsx 5개 통과)
 - [x] 키보드 내비게이션 전체 화면 (keyboard.test.tsx 6개 통과)
 - [x] 색상 대비 4.5:1 이상 — text-gray-400 → text-gray-600 수정 (gray-600 on white ≈ 6.6:1)
