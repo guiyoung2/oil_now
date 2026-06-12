@@ -1,9 +1,9 @@
 # Phase 1 실행 계획 — oil_now
 
 > 생성일: 2026-06-03
-> 마지막 갱신: 2026-06-12
-> 현재 Phase: **Phase 2-B 유가 뉴스 구현 완료**
-> 현재 Step: Phase 2-B 완료 (2026-06-12, S18·S19). news 테이블·collect-news·pg_cron(S18 백엔드) + useNews·NewsCard·NewsPage(S19 프론트엔드) 모두 완료. 93/93 tests PASS.
+> 마지막 갱신: 2026-06-13
+> 현재 Phase: **Phase 2 완료 + 앱 메타데이터 정리**
+> 현재 Step: 파비콘·오픈그래프 이미지·한글 메타데이터 적용 완료 (2026-06-13, S20). 1200×630 OG 이미지와 `.ico` favicon 생성, `index.html`/PWA manifest 메타데이터 갱신.
 
 ---
 
@@ -388,7 +388,7 @@ _테스트_
 
 ## 다음 작업
 
-**현재 위치:** Phase 2-B 완료 (2026-06-12, S18·S19). **Phase 2 전체 완료.**
+**현재 위치:** Phase 2 전체 완료 + 앱 메타데이터 정리 완료 (2026-06-13, S20).
 
 1. ✅ 잔여 1: `coord.ts` 단일 출처화 (2026-06-12, S14)
 2. ✅ 잔여 2: Edge Function 재배포 + collect-prices 실호출 검증 (2026-06-12, S15)
@@ -397,6 +397,7 @@ _테스트_
 5. ✅ Phase 2-B 설계 확정 (2026-06-12, brainstorming)
 6. ✅ Phase 2-B 백엔드: `news` 테이블 + `_shared/parseNews.ts` + `collect-news` Edge Function + pg_cron (2026-06-12, S18)
 7. ✅ Phase 2-B 프론트엔드: `useNews` + `NewsCard` + `NewsPage` TDD 구현 (2026-06-12, S19)
+8. ✅ 앱 메타데이터: favicon.ico, PWA 아이콘, OG 이미지, 한글 SEO/OG/Twitter 메타 적용 (2026-06-13, S20)
 
 **미결 사항:** 없음. Phase 2 전체 완료.
 
