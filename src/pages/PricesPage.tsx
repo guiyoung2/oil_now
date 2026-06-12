@@ -4,10 +4,17 @@ import { PriceTrendChart } from '../components/prices/PriceTrendChart'
 import { useAvgPrices } from '../hooks/useAvgPrices'
 import type { AvgFuelType } from '../types/avgPrice'
 
-const PERIOD_OPTIONS = [
-  { days: 30,  label: '1개월' },
-  { days: 90, label: '3개월' },
-] as const
+function getRecentMonths(count: number): Array<{ value: string; label: string }> {
+  const now = new Date()
+  return Array.from({ length: count }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+    const label = `${d.getMonth() + 1}월`
+    return { value, label }
+  })
+}
+
+const RECENT_MONTHS = getRecentMonths(6)
 
 const FUEL_LABELS: Record<AvgFuelType, string> = {
   gasoline: '휘발유',
@@ -24,8 +31,8 @@ const TODAY = new Date().toLocaleDateString('ko-KR', {
 })
 
 export function PricesPage() {
-  const [days, setDays] = useState<30 | 90>(30)
-  const { data, isLoading } = useAvgPrices(days)
+  const [selectedMonth, setSelectedMonth] = useState(RECENT_MONTHS[0].value)
+  const { data, isLoading } = useAvgPrices(selectedMonth)
 
   if (isLoading || !data) {
     return (
@@ -54,12 +61,12 @@ export function PricesPage() {
       <div className="mb-2 mt-6 flex items-center justify-between">
         <h2 className="text-base font-semibold text-gray-900">휘발유 가격 추이</h2>
         <div className="flex overflow-hidden rounded-lg border border-gray-200">
-          {PERIOD_OPTIONS.map(({ days: d, label }) => (
+          {RECENT_MONTHS.map(({ value, label }) => (
             <button
-              key={d}
-              onClick={() => setDays(d)}
+              key={value}
+              onClick={() => setSelectedMonth(value)}
               className={`px-3 py-1 text-xs font-medium transition-colors ${
-                days === d
+                selectedMonth === value
                   ? 'bg-blue-600 text-white'
                   : 'bg-white text-gray-600 hover:bg-gray-50'
               }`}

@@ -27,7 +27,11 @@ interface Props {
 }
 
 export function NewsCard({ item }: Props) {
+  const cleanTitle = decodeAndStrip(item.title)
   const cleanSummary = item.summary ? decodeAndStrip(item.summary) : ''
+  // "기사 제목 - 출처" 형태에서 " - 출처" 제거 후 summary 중복 여부 판단
+  const titleCore = cleanTitle.replace(/ - [^-]+$/, '').trim()
+  const showSummary = cleanSummary.length > 0 && !cleanSummary.toLowerCase().startsWith(titleCore.toLowerCase())
 
   return (
     <a
@@ -61,9 +65,9 @@ export function NewsCard({ item }: Props) {
         </div>
       </div>
       <p className="line-clamp-2 font-semibold leading-snug text-gray-900">
-        {decodeAndStrip(item.title)}
+        {cleanTitle}
       </p>
-      {cleanSummary && (
+      {showSummary && (
         <p className="line-clamp-2 text-sm leading-relaxed text-gray-500">{cleanSummary}</p>
       )}
     </a>

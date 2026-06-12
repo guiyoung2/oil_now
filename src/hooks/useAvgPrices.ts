@@ -14,10 +14,12 @@ interface RegionalAvgRow {
   diff: string | number
 }
 
-async function fetchAvgPrices(days: number): Promise<AvgPricesData> {
-  const startDate = new Date(Date.now() - (days - 1) * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .slice(0, 10)
+async function fetchAvgPrices(month: string): Promise<AvgPricesData> {
+  const [y, m] = month.split('-').map(Number)
+  const startDate = `${month}-01`
+  const nextYear = m === 12 ? y + 1 : y
+  const nextM = m === 12 ? 1 : m + 1
+  const endDate = `${nextYear}-${String(nextM).padStart(2, '0')}-01`
 
   const { data, error } = await supabase
     .from('regional_avg')
@@ -25,6 +27,7 @@ async function fetchAvgPrices(days: number): Promise<AvgPricesData> {
     .eq('region', '전국')
     .in('fuel_type', ['gasoline', 'diesel', 'lpg'])
     .gte('date', startDate)
+    .lt('date', endDate)
     .order('date', { ascending: true })
 
   if (error) throw error
@@ -41,7 +44,7 @@ async function fetchAvgPrices(days: number): Promise<AvgPricesData> {
       delta: Number(r.diff),
     }))
 
-  // 휘발유 7일 추이
+  // 휘발유 추이
   const trend: PriceTrendPoint[] = rows
     .filter((r) => r.fuel_type === 'gasoline')
     .map((r) => ({ date: r.date, price: Number(r.avg_price) }))
@@ -49,9 +52,10 @@ async function fetchAvgPrices(days: number): Promise<AvgPricesData> {
   return { avgPrices, trend }
 }
 
-export function useAvgPrices(days = 7) {
+export function useAvgPrices(month?: string) {
+  const targetMonth = month ?? new Date().toISOString().slice(0, 7)
   return useQuery<AvgPricesData>({
-    queryKey: ['avgPrices', days],
-    queryFn: () => fetchAvgPrices(days),
+    queryKey: ['avgPrices', targetMonth],
+    queryFn: () => fetchAvgPrices(targetMonth),
   })
 }
