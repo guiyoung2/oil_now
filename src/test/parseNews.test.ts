@@ -48,6 +48,23 @@ test('빈 RSS에서 빈 배열 반환', () => {
   expect(parseNewsRss(emptyRss)).toHaveLength(0)
 })
 
+test('Google News RSS 스타일 — description 전체가 엔티티 인코딩된 anchor 태그', () => {
+  const rss = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+  <item>
+    <title>기름값 급등</title>
+    <link>https://news.google.com/articles/5</link>
+    <source>연합뉴스</source>
+    <pubDate>Fri, 12 Jun 2026 03:00:00 GMT</pubDate>
+    <description>&lt;a href="https://news.google.com/rss/articles/CBMiVeryLongArticleIdThatCausesThe150CharLimitToTruncateInsideTheHtmlTagWithoutAClosingBracket"&gt;&lt;img src="img.jpg"/&gt;&lt;/a&gt;&lt;ol&gt;&lt;li&gt;기름값 상승 소식&lt;/li&gt;&lt;/ol&gt;</description>
+  </item>
+</channel></rss>`
+  const result = parseNewsRss(rss)
+  expect(result[0].summary).not.toContain('&lt;')
+  expect(result[0].summary).not.toContain('<a')
+  expect(result[0].summary.length).toBeLessThanOrEqual(150)
+})
+
 test('HTML 엔티티 디코딩 — title &amp; / summary &lt;a&gt; 처리', () => {
   const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0"><channel>

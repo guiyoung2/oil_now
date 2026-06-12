@@ -38,7 +38,14 @@ export function PriceTrendChart({ data }: Props) {
           data={data}
           margin={{ top: 8, right: 16, bottom: 8, left: 0 }}
         >
-          <XAxis dataKey="date" tickFormatter={(d) => d.slice(5)} fontSize={11} />
+          <XAxis
+            dataKey="date"
+            tickFormatter={(d: string) => {
+              const [, m, day] = d.split('-')
+              return `${parseInt(m)}/${parseInt(day)}`
+            }}
+            fontSize={11}
+          />
           <YAxis domain={['dataMin - 10', 'dataMax + 10']} width={44} fontSize={11} />
           <Tooltip />
           <Line

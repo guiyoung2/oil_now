@@ -54,10 +54,10 @@ export function parseNewsRss(xml: string): NewsItem[] {
     const pubDate = extractTag(block, 'pubDate')
     const rawDesc = extractTag(block, 'description')
 
-    // HTML 태그 제거 → 엔티티 디코딩 → 엔티티 인코딩 태그 재제거 → 150자 truncate
-    const stripped  = rawDesc.replace(/<[^>]*>/g, '')
-    const decoded   = decodeHtmlEntities(stripped)
-    const cleanDesc = decoded.replace(/<[^>]*>/g, '').trim()
+    // 엔티티 먼저 디코딩 → HTML 태그 제거(불완전 태그 포함) → 공백 정규화 → 150자 truncate
+    const decoded1  = decodeHtmlEntities(rawDesc)
+    const stripped  = decoded1.replace(/<[^>]*>?/g, '')
+    const cleanDesc = stripped.replace(/\s+/g, ' ').trim()
     const summary   = cleanDesc.slice(0, 150)
 
     let published_at: string

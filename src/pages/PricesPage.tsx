@@ -5,8 +5,8 @@ import { useAvgPrices } from '../hooks/useAvgPrices'
 import type { AvgFuelType } from '../types/avgPrice'
 
 const PERIOD_OPTIONS = [
-  { days: 7,  label: '7일' },
-  { days: 30, label: '30일' },
+  { days: 30,  label: '1개월' },
+  { days: 90, label: '3개월' },
 ] as const
 
 const FUEL_LABELS: Record<AvgFuelType, string> = {
@@ -24,7 +24,7 @@ const TODAY = new Date().toLocaleDateString('ko-KR', {
 })
 
 export function PricesPage() {
-  const [days, setDays] = useState<7 | 30>(7)
+  const [days, setDays] = useState<30 | 90>(30)
   const { data, isLoading } = useAvgPrices(days)
 
   if (isLoading || !data) {
@@ -52,7 +52,7 @@ export function PricesPage() {
       </div>
 
       <div className="mb-2 mt-6 flex items-center justify-between">
-        <h2 className="text-base font-semibold text-gray-900">휘발유 가격 변동</h2>
+        <h2 className="text-base font-semibold text-gray-900">휘발유 가격 추이</h2>
         <div className="flex overflow-hidden rounded-lg border border-gray-200">
           {PERIOD_OPTIONS.map(({ days: d, label }) => (
             <button
@@ -70,6 +70,11 @@ export function PricesPage() {
         </div>
       </div>
       <PriceTrendChart data={data.trend} />
+      {data.trend.length < 3 && (
+        <p className="mt-2 text-center text-xs text-gray-400">
+          데이터가 누적되고 있습니다. 매일 가격이 기록됩니다.
+        </p>
+      )}
     </div>
   )
 }
