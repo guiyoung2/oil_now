@@ -1,5 +1,17 @@
 import type { NewsItem } from '../../hooks/useNews'
 
+function decodeAndStrip(text: string): string {
+  const decoded = text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+  return decoded.replace(/<[^>]*>/g, '')
+}
+
 function formatElapsed(isoString: string): string {
   const diffMs = Date.now() - new Date(isoString).getTime()
   const diffH = Math.floor(diffMs / 3600000)
@@ -25,9 +37,9 @@ export function NewsCard({ item }: Props) {
         <span>{item.source}</span>
         <span>{formatElapsed(item.published_at)}</span>
       </div>
-      <p className="mb-1 font-medium leading-snug text-gray-900">{item.title}</p>
+      <p className="mb-1 font-medium leading-snug text-gray-900">{decodeAndStrip(item.title)}</p>
       {item.summary && (
-        <p className="line-clamp-2 text-sm text-gray-600">{item.summary}</p>
+        <p className="line-clamp-2 text-sm text-gray-600">{decodeAndStrip(item.summary)}</p>
       )}
     </a>
   )

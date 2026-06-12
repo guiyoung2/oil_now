@@ -1,7 +1,13 @@
+import { useState } from 'react'
 import { AvgPriceCard } from '../components/prices/AvgPriceCard'
 import { PriceTrendChart } from '../components/prices/PriceTrendChart'
 import { useAvgPrices } from '../hooks/useAvgPrices'
 import type { AvgFuelType } from '../types/avgPrice'
+
+const PERIOD_OPTIONS = [
+  { days: 7,  label: '7일' },
+  { days: 30, label: '30일' },
+] as const
 
 const FUEL_LABELS: Record<AvgFuelType, string> = {
   gasoline: '휘발유',
@@ -18,7 +24,8 @@ const TODAY = new Date().toLocaleDateString('ko-KR', {
 })
 
 export function PricesPage() {
-  const { data, isLoading } = useAvgPrices()
+  const [days, setDays] = useState<7 | 30>(7)
+  const { data, isLoading } = useAvgPrices(days)
 
   if (isLoading || !data) {
     return (
@@ -44,9 +51,24 @@ export function PricesPage() {
         ))}
       </div>
 
-      <h2 className="mb-2 mt-6 text-base font-semibold text-gray-900">
-        휘발유 가격 변동
-      </h2>
+      <div className="mb-2 mt-6 flex items-center justify-between">
+        <h2 className="text-base font-semibold text-gray-900">휘발유 가격 변동</h2>
+        <div className="flex overflow-hidden rounded-lg border border-gray-200">
+          {PERIOD_OPTIONS.map(({ days: d, label }) => (
+            <button
+              key={d}
+              onClick={() => setDays(d)}
+              className={`px-3 py-1 text-xs font-medium transition-colors ${
+                days === d
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
       <PriceTrendChart data={data.trend} />
     </div>
   )

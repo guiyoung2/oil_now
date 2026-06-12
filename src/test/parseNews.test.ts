@@ -47,3 +47,21 @@ test('빈 RSS에서 빈 배열 반환', () => {
   const emptyRss = `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel></channel></rss>`
   expect(parseNewsRss(emptyRss)).toHaveLength(0)
 })
+
+test('HTML 엔티티 디코딩 — title &amp; / summary &lt;a&gt; 처리', () => {
+  const rss = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+  <item>
+    <title>SK이노베이션 &amp; GS칼텍스 유가 대응</title>
+    <link>https://example.com/3</link>
+    <source>연합뉴스</source>
+    <pubDate>Fri, 12 Jun 2026 03:00:00 GMT</pubDate>
+    <description>&lt;a href="https://example.com"&gt;전문 보기&lt;/a&gt; 국제 유가 상승으로 정유사 대응 분주</description>
+  </item>
+</channel></rss>`
+  const result = parseNewsRss(rss)
+  expect(result[0].title).toBe('SK이노베이션 & GS칼텍스 유가 대응')
+  expect(result[0].summary).not.toContain('&lt;')
+  expect(result[0].summary).not.toContain('&gt;')
+  expect(result[0].summary).not.toContain('<a')
+})

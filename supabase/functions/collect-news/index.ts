@@ -2,7 +2,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { parseNewsRss } from "../_shared/parseNews.ts";
 
-const RSS_URL = "https://news.google.com/rss/search?q=%EC%9C%A0%EA%B0%80+%EA%B8%B0%EB%A6%84%EA%B0%92&hl=ko&gl=KR&ceid=KR:ko";
+const RSS_URL = "https://news.google.com/rss/search?q=%EC%9C%A0%EA%B0%80+OR+%EA%B8%B0%EB%A6%84%EA%B0%92+OR+%ED%9C%98%EB%B0%9C%EC%9C%A0+OR+%EC%9B%90%EC%9C%A0+when%3A7d&hl=ko&gl=KR&ceid=KR:ko";
 
 Deno.serve(async (_req: Request) => {
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";

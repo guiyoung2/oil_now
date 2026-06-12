@@ -14,8 +14,8 @@ interface RegionalAvgRow {
   diff: string | number
 }
 
-async function fetchAvgPrices(): Promise<AvgPricesData> {
-  const sevenDaysAgo = new Date(Date.now() - 6 * 24 * 60 * 60 * 1000)
+async function fetchAvgPrices(days: number): Promise<AvgPricesData> {
+  const startDate = new Date(Date.now() - (days - 1) * 24 * 60 * 60 * 1000)
     .toISOString()
     .slice(0, 10)
 
@@ -24,7 +24,7 @@ async function fetchAvgPrices(): Promise<AvgPricesData> {
     .select('date,fuel_type,avg_price,diff')
     .eq('region', '전국')
     .in('fuel_type', ['gasoline', 'diesel', 'lpg'])
-    .gte('date', sevenDaysAgo)
+    .gte('date', startDate)
     .order('date', { ascending: true })
 
   if (error) throw error
@@ -49,9 +49,9 @@ async function fetchAvgPrices(): Promise<AvgPricesData> {
   return { avgPrices, trend }
 }
 
-export function useAvgPrices() {
+export function useAvgPrices(days = 7) {
   return useQuery<AvgPricesData>({
-    queryKey: ['avgPrices'],
-    queryFn: fetchAvgPrices,
+    queryKey: ['avgPrices', days],
+    queryFn: () => fetchAvgPrices(days),
   })
 }

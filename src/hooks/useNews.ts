@@ -12,9 +12,12 @@ export interface NewsItem {
 }
 
 async function fetchNews(): Promise<NewsItem[]> {
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+
   const { data, error } = await supabase
     .from('news')
     .select('id,title,url,source,published_at,summary,collected_at')
+    .gte('published_at', thirtyDaysAgo)
     .order('published_at', { ascending: false })
     .limit(20)
 

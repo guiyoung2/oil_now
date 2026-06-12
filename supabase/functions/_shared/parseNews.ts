@@ -6,6 +6,17 @@ export interface NewsItem {
   summary: string        // description 150자 truncate (HTML 태그 제거)
 }
 
+function decodeHtmlEntities(text: string): string {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+}
+
 /** XML 태그 사이 텍스트 추출 (CDATA 포함) */
 function extractTag(xml: string, tag: string): string {
   const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i')
@@ -35,7 +46,7 @@ export function parseNewsRss(xml: string): NewsItem[] {
   while ((match = itemRe.exec(xml)) !== null) {
     const block = match[1]
 
-    const title = extractTag(block, 'title')
+    const title = decodeHtmlEntities(extractTag(block, 'title'))
     const url   = extractTag(block, 'link')
     if (!title || !url) continue
 
@@ -43,8 +54,10 @@ export function parseNewsRss(xml: string): NewsItem[] {
     const pubDate = extractTag(block, 'pubDate')
     const rawDesc = extractTag(block, 'description')
 
-    // HTML 태그 제거 후 150자 truncate
-    const cleanDesc = rawDesc.replace(/<[^>]*>/g, '').trim()
+    // HTML 태그 제거 → 엔티티 디코딩 → 엔티티 인코딩 태그 재제거 → 150자 truncate
+    const stripped  = rawDesc.replace(/<[^>]*>/g, '')
+    const decoded   = decodeHtmlEntities(stripped)
+    const cleanDesc = decoded.replace(/<[^>]*>/g, '').trim()
     const summary   = cleanDesc.slice(0, 150)
 
     let published_at: string
