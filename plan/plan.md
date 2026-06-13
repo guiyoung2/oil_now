@@ -431,8 +431,8 @@ _테스트_
 |-------|------|-----------|------|
 | **D0** | 토큰 기반 다지기 | 직접 작성 (impeccable 아님) | ✅ 완료 (2026-06-14, S22) |
 | **D1** | 공통 컴포넌트 스킨 (TabBar·StationCard) | 직접 작성 | ✅ 완료 (2026-06-14, S23) |
-| **D2** | 화면별 적용 | 직접 작성 | 🔶 진행 중 — 실시간 유가 ✅(S24) / 주변 주유소·뉴스 ⬜ |
-| **D3** | 마감 & 검증 | `audit` / `critique` / `polish` + 테스트 | ⬜ |
+| **D2** | 화면별 적용 | 직접 작성 | ✅ 완료 (2026-06-14) — 실시간 유가(S24·S25) / 주변 주유소·뉴스(S27) |
+| **D3** | 마감 & 검증 | `audit` / `critique` / `polish` + 테스트 | ⬜ 다음 |
 
 ## Phase D0 — 토큰 기반 다지기 (0순위, 한 번)
 
@@ -458,8 +458,8 @@ _테스트_
 
 - [x] **실시간 유가** (`PricesPage`/`AvgPriceCard`/`PriceTrendChart`) — 전국 평균 **그린 히어로 카드(휘발유)** + 보조 카드(경유·LPG) + 월 선택(연한 그린 선택) + recharts **그린 area 차트** (2026-06-14, S24). 동일 카드 3개 나열 → 1히어로+2보조로 재구성(impeccable "동일 카드 그리드" 회피)
   - [x] **배경 보정**(사용자 피드백 "회색 배경 단순") — B안 적용(S25): **그린 헤더 존**(전국 평균이 그린 그라데이션 띠에 얹힘) + **옅은 그린 틴트 시트(#EFF5F1)** 위 흰 카드(그린기 그림자)로 3겹 위계. 히어로 카드 variant 제거(인라인 헤더로 대체)
-- [ ] **주변 주유소** (`HomePage`/`FilterBar`/`KakaoMap`) — StationCard는 D1 완료. 남은 것: FilterBar(유종/정렬) 칩, EmptyState, 지도 말풍선 톤
-- [ ] **유가 뉴스** (`NewsPage`/`NewsCard`) — 동일 카드 언어·여백 통일
+- [x] **주변 주유소** (`HomePage`/`FilterBar`/`EmptyState`/`KakaoMap`) — FilterBar 유종 칩(활성 primary-700)·정렬 select 토큰화, EmptyState 아이콘+토큰, 지도 placeholder/지역선택 바 토큰화, **지도 말풍선** 가격 강조 빨강→그린·모서리/그림자 보정 (2026-06-14, S27)
+- [x] **유가 뉴스** (`NewsPage`/`NewsCard`) — NewsCard 카드 그림자·소스 배지 그린·텍스트 토큰화, NewsPage `bg-sheet`+헤더 토큰화 (2026-06-14, S27)
 
 **AA 메모(D2):** 흰 텍스트를 밝은 그린 `#16B364`에 올리면 2.74:1로 AA 미달 → 히어로는 진한 그린 그라데이션(`from-primary-deep to-primary-700`, 흰 텍스트 통과), 델타는 흰 pill+red-700/blue-600, 월 선택은 연한 그린(`bg-primary-50 text-primary-700`) 선택 패턴 사용.
 

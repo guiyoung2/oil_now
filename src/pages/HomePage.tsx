@@ -40,30 +40,30 @@ export function HomePage() {
         />
       ) : (
         <div
-          className="flex items-center justify-center bg-gray-100 shrink-0"
+          className="flex items-center justify-center bg-sheet shrink-0"
           style={{ height: '50vh' }}
           aria-label="주유소 지도"
           role="img"
         >
           {status === 'pending' && (
-            <p className="text-gray-400 text-sm">위치 확인 중...</p>
+            <p className="text-sub text-sm">위치 확인 중...</p>
           )}
           {(status === 'denied' || status === 'unavailable') && (
-            <p className="text-gray-400 text-sm">지역을 선택하면 지도가 표시됩니다</p>
+            <p className="text-sub text-sm">지역을 선택하면 지도가 표시됩니다</p>
           )}
         </div>
       )}
 
       {(status === 'denied' || status === 'unavailable') && (
-        <div className="flex items-center gap-2 px-4 py-2 bg-yellow-50 border-b shrink-0">
-          <label htmlFor="region-select" className="text-xs text-gray-600 shrink-0">
+        <div className="flex items-center gap-2 px-4 py-2 bg-primary-50 border-b border-line shrink-0">
+          <label htmlFor="region-select" className="text-xs font-medium text-sub shrink-0">
             지역 선택
           </label>
           <select
             id="region-select"
             value={fallbackRegion ?? ''}
             onChange={(e) => setFallbackRegion(e.target.value)}
-            className="text-sm border rounded px-2 min-h-[44px]"
+            className="text-sm rounded-lg border border-line bg-white px-2 min-h-[44px]"
           >
             <option value="">시/도 선택</option>
             {Object.keys(REGION_CENTERS).map((r) => (
@@ -78,7 +78,7 @@ export function HomePage() {
       <FilterBar />
 
       {isError && (
-        <p className="text-center text-sm text-red-500 py-4">
+        <p className="text-center text-sm text-red-700 py-4">
           데이터를 불러오지 못했어요
         </p>
       )}

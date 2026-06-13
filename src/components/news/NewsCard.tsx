@@ -38,13 +38,13 @@ export function NewsCard({ item }: Props) {
       href={item.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-col gap-2 rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:shadow-md active:scale-[0.99]"
+      className="group flex flex-col gap-2 rounded-xl border border-line bg-white p-4 shadow-[0_2px_12px_rgba(20,80,50,0.08)] transition-all hover:shadow-[0_4px_16px_rgba(20,80,50,0.12)] active:scale-[0.99]"
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+        <span className="rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-bold text-primary-700">
           {item.source}
         </span>
-        <div className="flex items-center gap-1 text-xs text-gray-400">
+        <div className="flex items-center gap-1 text-xs text-sub">
           <span>{formatElapsed(item.published_at)}</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -64,11 +64,11 @@ export function NewsCard({ item }: Props) {
           </svg>
         </div>
       </div>
-      <p className="line-clamp-2 font-semibold leading-snug text-gray-900">
+      <p className="line-clamp-2 font-bold leading-snug text-ink">
         {cleanTitle}
       </p>
       {showSummary && (
-        <p className="line-clamp-2 text-sm leading-relaxed text-gray-500">{cleanSummary}</p>
+        <p className="line-clamp-2 text-sm leading-relaxed text-sub">{cleanSummary}</p>
       )}
     </a>
   )

@@ -10,18 +10,18 @@ export function FilterBar() {
   const { fuelType, sortOrder, setFuelType, setSortOrder } = useFilterStore()
 
   return (
-    <div className="flex items-center gap-2 px-4 py-2 bg-white border-b shrink-0">
-      <div role="radiogroup" aria-label="유종 선택" className="flex gap-1">
+    <div className="flex items-center gap-2 px-4 py-2 bg-white border-b border-line shrink-0">
+      <div role="radiogroup" aria-label="유종 선택" className="flex gap-1.5">
         {FUEL_OPTIONS.map((opt) => (
           <button
             key={opt.value}
             role="radio"
             aria-checked={fuelType === opt.value}
             onClick={() => setFuelType(opt.value)}
-            className={`px-3 rounded-full text-sm font-medium min-h-[44px] ${
+            className={`inline-flex items-center justify-center px-3.5 rounded-full text-sm font-bold min-h-[44px] transition-colors ${
               fuelType === opt.value
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700'
+                ? 'bg-primary-700 text-white'
+                : 'bg-surface text-sub hover:bg-line'
             }`}
           >
             {opt.label}
@@ -32,7 +32,7 @@ export function FilterBar() {
         value={sortOrder}
         onChange={(e) => setSortOrder(e.target.value as SortOrder)}
         aria-label="정렬 기준"
-        className="ml-auto px-3 text-sm rounded border min-h-[44px]"
+        className="ml-auto px-3 text-sm font-medium text-sub rounded-lg border border-line bg-white min-h-[44px]"
       >
         <option value="distance">거리순</option>
         <option value="price">가격순</option>
