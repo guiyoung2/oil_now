@@ -471,10 +471,11 @@ _테스트_
 - [x] **접근성(WCAG AA)**: Lighthouse Accessibility **100**, axe 테스트 전 화면 통과. 대비 4.5:1·포커스·터치 44px 충족
 - [x] **Best-Practices 100**
 - [x] `prefers-reduced-motion` 대응 — 스켈레톤 `motion-reduce:animate-none` 추가
-- [x] **성능**: Lighthouse Performance **79**(기준 ≥70 통과). 폰트 `@import`→index.html `link`+preconnect로 렌더 블로킹 제거(0건). 잔여 병목은 **CSR 단일 JS 번들(835KB, recharts/supabase)** = 디자인 무관 기존 구조. FCP 2.7s/LCP 4.7s.
+- [x] **성능**: Lighthouse Performance **79 → 82**(코드 스플리팅 후, 기준 ≥70 통과). 폰트 `@import`→index.html `link`+preconnect로 렌더 블로킹 제거(0건).
+- [x] **코드 스플리팅(S29)**: 3개 라우트(`React.lazy`) + recharts 차트(lazy) 분리. 단일 835KB → 청크 분리(index 250 + supabase 200 + recharts 319 **지연** + 라우트별). 랜딩 초기 JS ≈ 455KB(recharts 제외). FCP 2.7→2.3s, LCP 4.7→4.4s.
 - [x] `npm test` **101/101** / `npm run build` 통과
 
-**남은 성능 개선(선택, 디자인 범위 밖):** 라우트·recharts 코드 스플리팅(React.lazy)으로 초기 번들 축소 → LCP 개선 가능. 별도 작업으로 분리.
+**잔여(범위 밖):** LCP는 데이터 패칭 의존(CSR). 추가 개선은 SSR/프리렌더 필요.
 
 ## 작업 원칙
 

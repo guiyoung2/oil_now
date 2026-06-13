@@ -1,8 +1,14 @@
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { AvgPriceCard } from '../components/prices/AvgPriceCard'
-import { PriceTrendChart } from '../components/prices/PriceTrendChart'
 import { useAvgPrices } from '../hooks/useAvgPrices'
 import type { AvgFuelType } from '../types/avgPrice'
+
+// recharts는 무거우므로 lazy 분리 — 랜딩 임계 경로에서 제외(LCP 개선)
+const PriceTrendChart = lazy(() =>
+  import('../components/prices/PriceTrendChart').then((m) => ({
+    default: m.PriceTrendChart,
+  })),
+)
 
 function getRecentMonths(count: number): Array<{ value: string; label: string }> {
   const now = new Date()
@@ -113,7 +119,16 @@ export function PricesPage() {
           </div>
         </div>
         <div className="rounded-xl bg-white p-3 shadow-[0_2px_12px_rgba(20,80,50,0.08)]">
-          <PriceTrendChart data={data.trend} />
+          <Suspense
+            fallback={
+              <div
+                style={{ height: 200 }}
+                className="animate-pulse motion-reduce:animate-none rounded-lg bg-line"
+              />
+            }
+          >
+            <PriceTrendChart data={data.trend} />
+          </Suspense>
           {data.trend.length < 3 && (
             <p className="mt-2 text-center text-xs text-sub">
               데이터가 누적되고 있습니다. 매일 가격이 기록됩니다.

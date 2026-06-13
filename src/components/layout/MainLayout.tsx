@@ -1,5 +1,14 @@
+import { Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
 import { TabBar } from './TabBar'
+
+function PageFallback() {
+  return (
+    <div className="flex flex-1 items-center justify-center bg-sheet">
+      <p className="text-sm text-sub">불러오는 중...</p>
+    </div>
+  )
+}
 
 export function MainLayout() {
   return (
@@ -22,7 +31,9 @@ export function MainLayout() {
         <TabBar />
       </header>
       <main className="flex flex-1 flex-col min-h-0">
-        <Outlet />
+        <Suspense fallback={<PageFallback />}>
+          <Outlet />
+        </Suspense>
       </main>
     </div>
   )
