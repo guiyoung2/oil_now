@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from 'react'
+import { lazy, Suspense } from 'react'
 import { AvgPriceCard } from '../components/prices/AvgPriceCard'
 import { useAvgPrices } from '../hooks/useAvgPrices'
 import type { AvgFuelType } from '../types/avgPrice'
@@ -9,18 +9,6 @@ const PriceTrendChart = lazy(() =>
     default: m.PriceTrendChart,
   })),
 )
-
-function getRecentMonths(count: number): Array<{ value: string; label: string }> {
-  const now = new Date()
-  return Array.from({ length: count }, (_, i) => {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-    const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-    const label = `${d.getMonth() + 1}월`
-    return { value, label }
-  })
-}
-
-const RECENT_MONTHS = getRecentMonths(6)
 
 const FUEL_LABELS: Record<AvgFuelType, string> = {
   gasoline: '휘발유',
@@ -43,8 +31,7 @@ function heroDeltaText(delta: number): string {
 }
 
 export function PricesPage() {
-  const [selectedMonth, setSelectedMonth] = useState(RECENT_MONTHS[0].value)
-  const { data, isLoading } = useAvgPrices(selectedMonth)
+  const { data, isLoading } = useAvgPrices()
 
   if (isLoading || !data) {
     return (
@@ -100,23 +87,9 @@ export function PricesPage() {
           </div>
         )}
 
-        <div className="mb-2 mt-6 flex items-center justify-between">
+        <div className="mb-2 mt-6 flex items-baseline justify-between">
           <h2 className="text-base font-bold text-ink">휘발유 가격 추이</h2>
-          <div className="flex overflow-hidden rounded-lg border border-line bg-white">
-            {RECENT_MONTHS.map(({ value, label }) => (
-              <button
-                key={value}
-                onClick={() => setSelectedMonth(value)}
-                className={`px-3 py-1 text-xs font-bold transition-colors ${
-                  selectedMonth === value
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'bg-white text-sub hover:bg-primary-50/60'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          <span className="text-xs font-medium text-sub">최근 7일</span>
         </div>
         <div className="rounded-xl bg-white p-3 shadow-[0_2px_12px_rgba(20,80,50,0.08)]">
           <Suspense

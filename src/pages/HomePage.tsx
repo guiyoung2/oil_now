@@ -1,5 +1,4 @@
-import { useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useMemo, useState } from 'react'
 import { KakaoMap } from '../components/home/KakaoMap'
 import { FilterBar } from '../components/home/FilterBar'
 import { StationList } from '../components/home/StationList'
@@ -9,9 +8,9 @@ import { useFilterStore } from '../store/filterStore'
 import { REGION_CENTERS } from '../lib/regions'
 
 export function HomePage() {
-  const navigate = useNavigate()
   const { status, lat, lng, fallbackRegion, setFallbackRegion } = useGeolocation()
   const { fuelType, sortOrder } = useFilterStore()
+  const [selectedStationId, setSelectedStationId] = useState<string | null>(null)
 
   const activeLat = lat ?? (fallbackRegion ? REGION_CENTERS[fallbackRegion]?.lat ?? null : null)
   const activeLng = lng ?? (fallbackRegion ? REGION_CENTERS[fallbackRegion]?.lng ?? null : null)
@@ -37,6 +36,7 @@ export function HomePage() {
           lng={activeLng}
           stations={stations}
           fuelType={fuelType}
+          selectedStationId={selectedStationId}
         />
       ) : (
         <div
@@ -85,7 +85,7 @@ export function HomePage() {
 
       <StationList
         stations={stations}
-        onStationClick={(id) => navigate(`/stations/${id}`)}
+        onStationClick={setSelectedStationId}
         fuelType={fuelType}
       />
     </div>

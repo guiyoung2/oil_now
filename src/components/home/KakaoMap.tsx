@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import type { FuelType, StationWithPrice } from '../../types/station'
 
 declare global {
@@ -12,6 +12,7 @@ interface Props {
   lng: number
   stations: StationWithPrice[]
   fuelType: FuelType
+  selectedStationId: string | null
 }
 
 function fmtPrice(price: number | null): string {
@@ -49,11 +50,30 @@ function overlayHtml(s: StationWithPrice, fuelType: FuelType): string {
 </div>`
 }
 
-export function KakaoMap({ lat, lng, stations, fuelType }: Props) {
+export function KakaoMap({ lat, lng, stations, fuelType, selectedStationId }: Props) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<any>(null)
   const clustererRef = useRef<any>(null)
   const overlayRef = useRef<any>(null)
+
+  // 지정한 주유소 위치에 말풍선 표시(기존 말풍선은 닫음). pan=true면 지도 중심도 이동.
+  const showOverlay = useCallback(
+    (station: StationWithPrice, ft: FuelType, pan = false) => {
+      const map = mapInstanceRef.current
+      if (!map || !window.kakao) return
+      const position = new window.kakao.maps.LatLng(station.lat, station.lng)
+      if (overlayRef.current) overlayRef.current.setMap(null)
+      const overlay = new window.kakao.maps.CustomOverlay({
+        position,
+        content: overlayHtml(station, ft),
+        yAnchor: 1.1,
+      })
+      overlay.setMap(map)
+      overlayRef.current = overlay
+      if (pan) map.panTo(position)
+    },
+    [],
+  )
 
   // 지도 초기화 (위치 변경 시 중심 이동)
   useEffect(() => {
@@ -91,24 +111,23 @@ export function KakaoMap({ lat, lng, stations, fuelType }: Props) {
         const marker = new window.kakao.maps.Marker({ position })
 
         window.kakao.maps.event.addListener(marker, 'click', () => {
-          // 기존 오버레이 닫기
-          if (overlayRef.current) {
-            overlayRef.current.setMap(null)
-          }
-          const overlay = new window.kakao.maps.CustomOverlay({
-            position,
-            content: overlayHtml(station, fuelType),
-            yAnchor: 1.1,
-          })
-          overlay.setMap(mapInstanceRef.current)
-          overlayRef.current = overlay
+          showOverlay(station, fuelType)
         })
 
         return marker
       })
       clustererRef.current.addMarkers(markers)
     })
-  }, [lat, lng, stations, fuelType])
+  }, [lat, lng, stations, fuelType, showOverlay])
+
+  // 리스트에서 주유소 선택 시 해당 마커로 지도 이동 + 말풍선 + 지도 영역으로 스크롤
+  useEffect(() => {
+    if (!selectedStationId) return
+    const station = stations.find((s) => s.id === selectedStationId)
+    if (!station) return
+    showOverlay(station, fuelType, true)
+    mapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [selectedStationId, stations, fuelType, showOverlay])
 
   return (
     <div

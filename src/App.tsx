@@ -25,7 +25,6 @@ export default function App() {
             <Route path="/nearby" element={<HomePage />} />
             <Route path="/news" element={<NewsPage />} />
           </Route>
-          <Route path="/stations/:id" element={<div className="p-4">상세 화면 (Step 5)</div>} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

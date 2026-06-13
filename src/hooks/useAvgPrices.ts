@@ -14,20 +14,22 @@ interface RegionalAvgRow {
   diff: string | number
 }
 
-async function fetchAvgPrices(month: string): Promise<AvgPricesData> {
-  const [y, m] = month.split('-').map(Number)
-  const startDate = `${month}-01`
-  const nextYear = m === 12 ? y + 1 : y
-  const nextM = m === 12 ? 1 : m + 1
-  const endDate = `${nextYear}-${String(nextM).padStart(2, '0')}-01`
+// Opinet은 일별 평균가 시계열을 최근 7일까지만 제공(avgRecentPrice.do).
+// 과거 소급 적재가 불가능하므로 추이도 최근 7일로 고정한다.
+const TREND_DAYS = 7
+
+async function fetchAvgPrices(): Promise<AvgPricesData> {
+  // 적재 지연(당일 데이터 부재)을 감안해 넉넉히 조회한 뒤 최근 7개만 사용한다.
+  const cutoff = new Date()
+  cutoff.setDate(cutoff.getDate() - 14)
+  const cutoffDate = cutoff.toISOString().slice(0, 10)
 
   const { data, error } = await supabase
     .from('regional_avg')
     .select('date,fuel_type,avg_price,diff')
     .eq('region', '전국')
     .in('fuel_type', ['gasoline', 'diesel', 'lpg'])
-    .gte('date', startDate)
-    .lt('date', endDate)
+    .gte('date', cutoffDate)
     .order('date', { ascending: true })
 
   if (error) throw error
@@ -44,18 +46,18 @@ async function fetchAvgPrices(month: string): Promise<AvgPricesData> {
       delta: Number(r.diff),
     }))
 
-  // 휘발유 추이
+  // 휘발유 최근 7일 추이
   const trend: PriceTrendPoint[] = rows
     .filter((r) => r.fuel_type === 'gasoline')
     .map((r) => ({ date: r.date, price: Number(r.avg_price) }))
+    .slice(-TREND_DAYS)
 
   return { avgPrices, trend }
 }
 
-export function useAvgPrices(month?: string) {
-  const targetMonth = month ?? new Date().toISOString().slice(0, 7)
+export function useAvgPrices() {
   return useQuery<AvgPricesData>({
-    queryKey: ['avgPrices', targetMonth],
-    queryFn: () => fetchAvgPrices(targetMonth),
+    queryKey: ['avgPrices', 'recent7'],
+    queryFn: fetchAvgPrices,
   })
 }
