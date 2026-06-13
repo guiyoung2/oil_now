@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-14T00:00:00Z",
+  "title": "Design System: oil_now",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "프레시 그린 (Fresh Green)",
+        "canonical": "#16B364",
+        "tonalRamp": ["#062E1A", "#0A4D2C", "#0A7D45", "#0E9F58", "#16B364", "#82DCAE", "#C2EFD6", "#EAF7F0"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "잉크 (Ink)",
+        "canonical": "#1F1F1F",
+        "tonalRamp": ["#1F1F1F", "#3A3A3D", "#555558", "#6B7280", "#9A9A9E", "#C7C7CB", "#E5E6E9", "#F6F7F9"]
+      },
+      "price-up": {
+        "role": "tertiary",
+        "displayName": "상승 레드 (Up Red)",
+        "canonical": "#F03E3E",
+        "tonalRamp": ["#5C0E0E", "#8A1717", "#B82424", "#F03E3E", "#F66B6B", "#FA9D9D", "#FDCFCF", "#FEE8E8"]
+      },
+      "price-down": {
+        "role": "tertiary",
+        "displayName": "하락 블루 (Down Blue)",
+        "canonical": "#3182F6",
+        "tonalRamp": ["#0C2E5C", "#13478A", "#1C61B8", "#3182F6", "#5E9FF8", "#9CC3FB", "#CBDFFD", "#E8F1FE"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "히어로의 큰 가격 숫자. 화면당 1개." },
+      "title": { "displayName": "Title", "purpose": "화면 제목." },
+      "body-strong": { "displayName": "Body Strong", "purpose": "주유소명 등 강조 본문." },
+      "body": { "displayName": "Body", "purpose": "일반 본문." },
+      "caption": { "displayName": "Caption", "purpose": "거리·메타 정보. 뮤트 색." }
+    },
+    "shadows": [
+      { "name": "card", "value": "0 2px 10px rgba(0,0,0,0.05)", "purpose": "모든 둥근 카드의 기본. 은은한 다정한 부유감." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "상태 전환 기본 이징. 150–250ms." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "주 액션(길찾기 등). 프레시 그린 채움.",
+      "html": "<button class=\"ds-btn-primary\">길찾기</button>",
+      "css": ".ds-btn-primary { background: #16B364; color: #fff; font-weight: 700; font-size: 0.875rem; padding: 12px 20px; border: none; border-radius: 14px; cursor: pointer; transition: background 0.18s cubic-bezier(0.4,0,0.2,1); } .ds-btn-primary:hover { background: #0E9F58; } .ds-btn-primary:focus-visible { outline: 2px solid #0E9F58; outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "보조 액션(즐겨찾기 등). 그린 틴트 배경.",
+      "html": "<button class=\"ds-btn-secondary\">즐겨찾기</button>",
+      "css": ".ds-btn-secondary { background: #EAF7F0; color: #0E9F58; font-weight: 700; font-size: 0.875rem; padding: 12px 20px; border: none; border-radius: 14px; cursor: pointer; transition: background 0.18s cubic-bezier(0.4,0,0.2,1); } .ds-btn-secondary:hover { background: #D6F4E5; } .ds-btn-secondary:focus-visible { outline: 2px solid #0E9F58; outline-offset: 2px; }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "유종/정렬 필터. 비선택 상태.",
+      "html": "<button class=\"ds-chip\">경유</button>",
+      "css": ".ds-chip { background: #fff; color: #9A9A9E; font-weight: 600; font-size: 0.8125rem; padding: 7px 14px; border: 1px solid #EAEAEA; border-radius: 999px; cursor: pointer; transition: all 0.18s cubic-bezier(0.4,0,0.2,1); } .ds-chip:hover { border-color: #A7E8C6; color: #6B7280; }"
+    },
+    {
+      "name": "Filter Chip (Selected)",
+      "kind": "chip",
+      "refersTo": "chip-selected",
+      "description": "선택된 필터. 프레시 그린 채움.",
+      "html": "<button class=\"ds-chip-selected\">휘발유</button>",
+      "css": ".ds-chip-selected { background: #16B364; color: #fff; font-weight: 600; font-size: 0.8125rem; padding: 7px 14px; border: 1px solid #16B364; border-radius: 999px; cursor: pointer; }"
+    },
+    {
+      "name": "Lowest Price Badge",
+      "kind": "custom",
+      "refersTo": "badge-lowest",
+      "description": "최저가 표시 배지.",
+      "html": "<span class=\"ds-badge-lowest\">최저가</span>",
+      "css": ".ds-badge-lowest { display: inline-block; background: #16B364; color: #fff; font-weight: 700; font-size: 0.625rem; padding: 3px 8px; border-radius: 6px; }"
+    },
+    {
+      "name": "Station Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "주유소 목록 카드. 좌측 이름/메타, 우측 가격.",
+      "html": "<div class=\"ds-station-card\"><div class=\"ds-station-info\"><div class=\"ds-station-name\">GS칼텍스 역삼점</div><div class=\"ds-station-meta\">320m · 셀프</div></div><div class=\"ds-station-price-wrap\"><div class=\"ds-station-price\">1,648원 <span class=\"ds-badge-lowest\">최저가</span></div><div class=\"ds-station-sub\">경유 1,498</div></div></div>",
+      "css": ".ds-station-card { display: flex; align-items: center; justify-content: space-between; background: #fff; border-radius: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 15px; } .ds-station-name { font-weight: 700; font-size: 0.9375rem; letter-spacing: -0.01em; color: #1F1F1F; } .ds-station-meta { font-size: 0.75rem; color: #9A9A9E; margin-top: 3px; } .ds-station-price-wrap { text-align: right; } .ds-station-price { font-weight: 800; font-size: 1.0625rem; letter-spacing: -0.02em; color: #0E9F58; } .ds-station-sub { font-size: 0.71875rem; color: #9A9A9E; margin-top: 2px; } .ds-badge-lowest { display: inline-block; background: #16B364; color: #fff; font-weight: 700; font-size: 0.625rem; padding: 2px 7px; border-radius: 6px; }"
+    },
+    {
+      "name": "Hero Card (전국 평균)",
+      "kind": "custom",
+      "refersTo": "hero-card",
+      "description": "전국 평균 유가 히어로. 그린 표면 + 큰 가격 + 변동 배지.",
+      "html": "<div class=\"ds-hero\"><div class=\"ds-hero-label\">전국 평균 · 휘발유</div><div class=\"ds-hero-price\">1,659원</div><span class=\"ds-hero-delta\">▼ 어제보다 3원 내림</span></div>",
+      "css": ".ds-hero { background: #16B364; color: #fff; border-radius: 20px; padding: 20px; } .ds-hero-label { font-size: 0.8125rem; font-weight: 600; opacity: 0.92; } .ds-hero-price { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-top: 4px; } .ds-hero-delta { display: inline-flex; align-items: center; gap: 4px; font-size: 0.8125rem; font-weight: 700; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 999px; margin-top: 8px; }"
+    },
+    {
+      "name": "Tab Navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "상단 탭 바. 활성 탭은 잉크 텍스트 + 하단 그린 인디케이터.",
+      "html": "<nav class=\"ds-tabs\"><a class=\"ds-tab ds-tab-active\">실시간 유가</a><a class=\"ds-tab\">주변 주유소</a><a class=\"ds-tab\">유가 뉴스</a></nav>",
+      "css": ".ds-tabs { display: flex; background: #fff; border-bottom: 1px solid #F2F4F6; } .ds-tab { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 44px; font-size: 0.875rem; font-weight: 600; color: #9A9A9E; text-decoration: none; cursor: pointer; } .ds-tab-active { color: #1F1F1F; box-shadow: inset 0 -2px 0 #16B364; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "한눈에 읽어주는 동네 친구",
+    "overview": "운전 중 잠깐 흘긋 보는 사용자에게, 가격을 잘 아는 다정한 친구가 옆에서 '여기가 제일 싸'라고 한눈에 짚어주는 경험. 따뜻함(친구)과 명료함(가격표)을 동시에 만족한다. 친근한 둥근 카드와 부드러운 그림자로 다정함을 주되, 정보 위계는 칼같이 정돈해 3초 안에 '어디가 싼가'를 답한다. 화면의 주인공은 언제나 숫자(가격·거리)이며, 색과 장식은 그 숫자를 받쳐줄 뿐이다.",
+    "keyCharacteristics": [
+      "순백/쿨그레이 배경 위, 채도 높은 프레시 그린 강조",
+      "둥근 카드(18px) + 은은한 그림자로 만드는 다정함",
+      "숫자 우선 위계: 가장 큰 타입은 항상 가격",
+      "색은 역할이 명확 — 그린=브랜드/액션, 빨강·파랑=가격 변동",
+      "모바일 글랜스 우선, 표준 어포던스 존중"
+    ],
+    "rules": [
+      { "name": "역할 분리 규칙 (The Role-Split Rule)", "body": "그린은 브랜드·액션·강조에만, 빨강과 파랑은 가격 변동(상승/하락) 신호에만 쓴다. 두 역할을 섞거나 색을 장식으로 쓰지 않는다.", "section": "colors" },
+      { "name": "숫자 우선 규칙 (The Numbers-First Rule)", "body": "어느 화면에서든 가장 큰 타입은 가격 숫자다. 제목·라벨이 가격보다 커지면 위계가 틀어진 것이다.", "section": "typography" },
+      { "name": "둘 중 하나 규칙 (The Either-Or Rule)", "body": "한 요소에 그림자와 1px 초과 테두리를 동시에 쓰지 않는다. 카드는 그림자로, 칩은 얇은 라인으로.", "section": "elevation" }
+    ],
+    "dos": [
+      "강조색은 프레시 그린(#16B364) 하나로 통일하고, 가격 변동만 상승 레드(#F03E3E)/하락 블루(#3182F6)로 표시한다.",
+      "가장 큰 타입은 항상 가격 숫자로 둔다(숫자 우선 규칙).",
+      "카드는 은은한 그림자(0 2px 10px rgba(0,0,0,0.05)) 하나로만 띄운다.",
+      "가격 변동은 색에 더해 ▲▼ 화살표·텍스트로도 구분해 색약 사용자를 배려한다(WCAG AA).",
+      "본문 명도대비 ≥ 4.5:1을 지킨다. 뮤트 그레이를 본문에 쓰지 않는다."
+    ],
+    "donts": [
+      "크림/베이지(#F0EEE6 계열) 배경 + 점토색 테라코타(#D97757 계열) + 세리프의 클로드 홈페이지 룩을 쓰지 않는다.",
+      "보라→파랑 그라데이션, 장식용 글래스모피즘, 중첩 카드, 색 위 회색 텍스트, bounce/elastic 이징 같은 전형적 AI 슬롭을 쓰지 않는다.",
+      "그린을 장식으로 흩뿌리거나, 빨강/파랑을 가격 변동 외 용도로 쓰지 않는다.",
+      "한 요소에 그림자와 1px 초과 테두리를 동시에 쓰지 않는다.",
+      "유동 clamp로 제목 크기를 흔들지 않는다 — 제품 UI는 고정 rem 스케일."
+    ]
+  }
+}

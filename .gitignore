@@ -43,6 +43,9 @@ logs/
 .claude/worktrees/
 .superpowers/
 
+# impeccable live 모드 런타임 저널 (프로젝트 소스 아님)
+.impeccable/live/sessions/
+
 # Vite 빌드 산출물
 dist
 dist-ssr
