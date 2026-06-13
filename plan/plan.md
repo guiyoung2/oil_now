@@ -1,9 +1,9 @@
 # Phase 1 실행 계획 — oil_now
 
 > 생성일: 2026-06-03
-> 마지막 갱신: 2026-06-13
-> 현재 Phase: **Phase 2 완료 + 앱 메타데이터 정리**
-> 현재 Step: 파비콘·오픈그래프 이미지·한글 메타데이터 적용 완료 (2026-06-13, S20). 1200×630 OG 이미지와 `.ico` favicon 생성, `index.html`/PWA manifest 메타데이터 갱신.
+> 마지막 갱신: 2026-06-14
+> 현재 Phase: **Phase 2 완료 → 디자인 개편 트랙 착수**
+> 현재 Step: 디자인 개편 착수. 브레인스토밍으로 디자인 방향 확정(프레시 그린 / 친근한 소비자 앱) + impeccable 설치 + `/impeccable init`(PRODUCT.md·DESIGN.md·live 설정) 완료 (2026-06-14). 다음은 Phase D0 토큰 기반 다지기. 상세는 문서 맨 끝 **"디자인 개편 트랙"** 참고.
 
 ---
 
@@ -407,3 +407,81 @@ _테스트_
 - `collect-prices`: pg_cron 미적용, 수동 트리거 가능
 - `collect-regional-avg`: 배포 완료(v3, 2026-06-13). avgRecentPrice.do(7일)+avgAllPrice.do(diff) 조합. pg_cron Vault 시크릿 등록 완료 → 매일 10:30 KST 자동 실행. regional_avg 6/6~6/13 40행 적재.
 - `collect-news`: 배포 완료(v2), 실호출 rows=20 status=success. pg_cron `0 0,12 * * *` 스케줄 적용(cron_collect_news migration)
+
+---
+
+# 디자인 개편 트랙 (Design Overhaul Track)
+
+> 착수: 2026-06-14
+> 목표: 기능만 구현된 밋밋한 UI를 **친근한 소비자 앱**(프레시 그린 `#16B364` / Pretendard / 둥근 카드) 디자인으로 전면 개편.
+> 도구: impeccable 스킬(프로젝트 로컬 설치). 가드레일 = 41개 AI 안티패턴 탐지.
+> 기준 문서: `DESIGN.md`(비주얼 토큰), `PRODUCT.md`(전략), `docs/superpowers/specs/2026-06-13-design-direction-design.md`(방향 합의).
+
+## 확정된 디자인 방향 (브레인스토밍 합의, 2026-06-14)
+
+- **성격:** 친근한 소비자 앱 (토스·배민·당근 결). 둥근 카드 + 부드러운 그림자.
+- **강조색:** 프레시 그린 `#16B364` (그린=브랜드/액션, 빨강 `#F03E3E`=상승 / 파랑 `#3182F6`=하락 — 역할 분리).
+- **배경/폰트:** 순백·쿨그레이 / Pretendard 산세리프 (라이트 모드 단일).
+- **안티레퍼런스:** 클로드 룩(크림+점토색+세리프), 전형적 AI 슬롭.
+- **North Star:** "한눈에 읽어주는 동네 친구".
+
+## 단계 개요
+
+| Phase | 작업 | 실행 방법 | 상태 |
+|-------|------|-----------|------|
+| **D0** | 토큰 기반 다지기 | 직접 작성 (impeccable 아님) | ⬜ 다음 |
+| **D1** | 공통 컴포넌트 스킨 | `live` / `polish` | ⬜ |
+| **D2** | 화면별 적용 | `craft` / `live` / `colorize` | ⬜ |
+| **D3** | 마감 & 검증 | `audit` / `critique` / `polish` + 테스트 | ⬜ |
+
+## Phase D0 — 토큰 기반 다지기 (0순위, 한 번)
+
+> 모든 화면이 의존. 가장 먼저. impeccable보다 직접 작성이 빠름.
+
+- [ ] **Pretendard 로드** — CDN 또는 로컬, `index.css` 기본 `font-family` 설정
+- [ ] **Tailwind v4 `@theme` 토큰** — `index.css`의 `@theme {}`에 DESIGN.md 색/반경 토큰을 CSS 변수로 (`--color-primary: #16B364` 등). v4는 `tailwind.config.js` 아님
+- [ ] **전역 기본값** — `body` 배경 순백/쿨그레이, 기본 텍스트 잉크(#1F1F1F)
+
+**완료 기준:** 토큰 클래스가 동작하고, 기존 `text-blue-600` 등 하드코딩 색이 토큰 기반으로 정리됨. `npm run build`·`npm test` 그린 유지.
+
+## Phase D1 — 공통 컴포넌트 스킨
+
+- [ ] `TabBar.tsx` — 파랑 → 잉크 텍스트 + 하단 그린 인디케이터
+- [ ] `StationCard.tsx` — 평면 → 둥근 카드(18px)+은은한 그림자, 최저가 그린, 전일대비 ▲빨강/▼파랑
+- [ ] 칩·배지·버튼 프리미티브 — DESIGN.md 컴포넌트 토큰대로
+
+**실행 방법:** `npm run dev` 후 `/impeccable live`(요소 클릭 변형) 또는 `/impeccable polish StationCard`.
+
+## Phase D2 — 화면별 적용
+
+- [ ] **실시간 유가** (`PricesPage`/`AvgPriceCard`/`PriceTrendChart`) — 전국 평균 히어로 카드(그린) + 유종 칩 + recharts 라인 그린화
+- [ ] **주변 주유소** (`HomePage`/`KakaoMap`/`StationList`) — 둥근 카드 가상 스크롤 리스트 + 최저가 배지
+- [ ] **유가 뉴스** (`NewsPage`/`NewsCard`) — 동일 카드 언어·여백 통일
+
+**실행 방법:** 구조 바뀌는 히어로는 `craft`, 기존 리스트 리스킨은 `live`/`polish`/`colorize`/`layout`. **화면 하나를 끝까지 완성 후 패턴 복제**(일관성).
+
+## Phase D3 — 마감 & 검증
+
+- [ ] 접근성(WCAG AA): 대비 4.5:1, 포커스, 터치 44px → `/impeccable audit`
+- [ ] `prefers-reduced-motion` 대응
+- [ ] `/impeccable critique <화면>` → `/impeccable polish`
+- [ ] `npm test`(93 그린) / `npm run lighthouse`
+
+## 작업 원칙
+
+- **외과적 변경** — 구조는 유지, 스킨만. 요청 범위만 건드림.
+- **테스트 그린 유지** — 마크업/role 변경 시 해당 테스트도 갱신.
+- **한 화면 완성 → 복제** — 전부 동시에 갈아엎지 않음.
+
+## impeccable 명령 매핑
+
+| 상황 | 명령 |
+|------|------|
+| 화면을 구조부터 다시 | `craft <화면>` |
+| 브라우저 즉석 변형 | `live` (dev 서버 필요) |
+| 색만 | `colorize` |
+| 폰트·위계 | `typeset` |
+| 간격·정렬 | `layout` |
+| 출시 전 마감 | `polish <대상>` |
+| 점수 리뷰 | `critique <화면>` |
+| a11y/성능 | `audit <대상>` |
