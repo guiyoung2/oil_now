@@ -399,7 +399,12 @@ _테스트_
 7. ✅ Phase 2-B 프론트엔드: `useNews` + `NewsCard` + `NewsPage` TDD 구현 (2026-06-12, S19)
 8. ✅ 앱 메타데이터: favicon.ico, PWA 아이콘, OG 이미지, 한글 SEO/OG/Twitter 메타 적용 (2026-06-13, S20)
 
-**미결 사항:** 없음. Phase 2 전체 완료.
+**배포 후 버그 수정 (2026-06-14):**
+- ✅ (S30) 주변 주유소 리스트 클릭 → 빈 상세화면 대신 지도 마커 이동 + 말풍선 (죽은 `/stations/:id` 라우트 제거)
+- ✅ (S30) 가격 추이 월 선택 제거 → 최근 7일 고정 (Opinet 일별 시계열 API가 최근 7일까지만 제공, 과거 백필 불가 확정)
+- ✅ (S31) 적재 파이프라인 diff 수정 — avgRecentPrice.do에 DIFF 없음 → 인접일 차이 자체 계산(v4 재배포). cron 자동 적재 복구 검증. 당일 데이터 부재는 Opinet 미제공으로 정상.
+
+**미결 사항:** 없음.
 
 ### 현재 데이터 현황
 - 개발 모드(npm run dev): MSW가 `around-stations`(주변 주유소)·`regional_avg`(평균가) 요청을 가로채 fixture 반환

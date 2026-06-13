@@ -95,9 +95,18 @@ describe('parseRecentPriceResponse (avgRecentPrice.do)', () => {
     expect(rows.find((r) => r.fuel_type === 'gasoline' && r.date === '2026-06-12')?.avg_price).toBe(2009.66)
   })
 
-  it('diff 는 0으로 채워짐', () => {
+  it('diff — 유종별 인접일 차이로 계산(첫날은 0)', () => {
     const rows = parseRecentPriceResponse(RECENT_FIXTURE)
-    expect(rows.every((r) => r.diff === 0)).toBe(true)
+    // gasoline: 6/11 첫날 0, 6/12 = 2009.66 - 2010.12 = -0.46
+    const g11 = rows.find((r) => r.fuel_type === 'gasoline' && r.date === '2026-06-11')
+    const g12 = rows.find((r) => r.fuel_type === 'gasoline' && r.date === '2026-06-12')
+    expect(g11!.diff).toBe(0)
+    expect(g12!.diff).toBe(-0.46)
+    // diesel: 6/11 첫날 0, 6/12 = 2004.38 - 2005.01 = -0.63
+    const d11 = rows.find((r) => r.fuel_type === 'diesel' && r.date === '2026-06-11')
+    const d12 = rows.find((r) => r.fuel_type === 'diesel' && r.date === '2026-06-12')
+    expect(d11!.diff).toBe(0)
+    expect(d12!.diff).toBe(-0.63)
   })
 
   it('여러 날짜 × 여러 유종 모두 파싱', () => {
