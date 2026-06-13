@@ -1,4 +1,35 @@
+/* Pretendard (가변 폰트 동적 서브셋 — 한글·숫자 가독성, 가벼운 로드) */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css");
 @import "tailwindcss";
+
+/* DESIGN.md 디자인 토큰 (프레시 그린 시스템) */
+@theme {
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", sans-serif;
+
+  /* 브랜드 · 프레시 그린 (강조·액션 전용) */
+  --color-primary: #16b364;
+  --color-primary-50: #eaf7f0;
+  --color-primary-200: #a7e8c6;
+  --color-primary-deep: #0e9f58;
+  --color-primary-700: #0a7d45;
+
+  /* 중립 */
+  --color-ink: #1f1f1f;
+  --color-sub: #6b7280;
+  --color-muted: #9a9a9e;
+  --color-line: #f2f4f6;
+  --color-surface: #f6f7f9;
+
+  /* 시맨틱 · 가격 변동 (그린과 역할 분리) */
+  --color-price-up: #f03e3e;
+  --color-price-down: #3182f6;
+
+  /* 모서리 반경 */
+  --radius-sm: 6px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 20px;
+}
 
 *,
 *::before,
@@ -8,6 +39,8 @@
 
 body {
   margin: 0;
+  background-color: var(--color-white);
+  color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

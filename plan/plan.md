@@ -429,8 +429,8 @@ _테스트_
 
 | Phase | 작업 | 실행 방법 | 상태 |
 |-------|------|-----------|------|
-| **D0** | 토큰 기반 다지기 | 직접 작성 (impeccable 아님) | ⬜ 다음 |
-| **D1** | 공통 컴포넌트 스킨 | `live` / `polish` | ⬜ |
+| **D0** | 토큰 기반 다지기 | 직접 작성 (impeccable 아님) | ✅ 완료 (2026-06-14, S22) |
+| **D1** | 공통 컴포넌트 스킨 | `live` / `polish` | ⬜ 다음 |
 | **D2** | 화면별 적용 | `craft` / `live` / `colorize` | ⬜ |
 | **D3** | 마감 & 검증 | `audit` / `critique` / `polish` + 테스트 | ⬜ |
 
@@ -438,11 +438,11 @@ _테스트_
 
 > 모든 화면이 의존. 가장 먼저. impeccable보다 직접 작성이 빠름.
 
-- [ ] **Pretendard 로드** — CDN 또는 로컬, `index.css` 기본 `font-family` 설정
-- [ ] **Tailwind v4 `@theme` 토큰** — `index.css`의 `@theme {}`에 DESIGN.md 색/반경 토큰을 CSS 변수로 (`--color-primary: #16B364` 등). v4는 `tailwind.config.js` 아님
-- [ ] **전역 기본값** — `body` 배경 순백/쿨그레이, 기본 텍스트 잉크(#1F1F1F)
+- [x] **Pretendard 로드** — 가변폰트 동적 서브셋 CDN, `--font-sans` 지정 (2026-06-14)
+- [x] **Tailwind v4 `@theme` 토큰** — `index.css` `@theme`에 DESIGN.md 색/반경 토큰 정의 (2026-06-14)
+- [x] **전역 기본값** — `body` 배경 white, 기본 텍스트 잉크(#1F1F1F) (2026-06-14)
 
-**완료 기준:** 토큰 클래스가 동작하고, 기존 `text-blue-600` 등 하드코딩 색이 토큰 기반으로 정리됨. `npm run build`·`npm test` 그린 유지.
+**완료 기준:** 토큰 클래스 동작 + `npm run build` ✅ + `vitest run 101/101` ✅. (기존 `text-blue-600` 등 하드코딩 색의 토큰 기반 정리는 D1 컴포넌트 작업에서 진행 — D0는 토대만.)
 
 ## Phase D1 — 공통 컴포넌트 스킨
 
