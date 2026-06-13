@@ -456,6 +456,7 @@ _테스트_
 ## Phase D2 — 화면별 적용
 
 - [x] **실시간 유가** (`PricesPage`/`AvgPriceCard`/`PriceTrendChart`) — 전국 평균 **그린 히어로 카드(휘발유)** + 보조 카드(경유·LPG) + 월 선택(연한 그린 선택) + recharts **그린 area 차트** (2026-06-14, S24). 동일 카드 3개 나열 → 1히어로+2보조로 재구성(impeccable "동일 카드 그리드" 회피)
+  - [x] **배경 보정**(사용자 피드백 "회색 배경 단순") — B안 적용(S25): **그린 헤더 존**(전국 평균이 그린 그라데이션 띠에 얹힘) + **옅은 그린 틴트 시트(#EFF5F1)** 위 흰 카드(그린기 그림자)로 3겹 위계. 히어로 카드 variant 제거(인라인 헤더로 대체)
 - [ ] **주변 주유소** (`HomePage`/`FilterBar`/`KakaoMap`) — StationCard는 D1 완료. 남은 것: FilterBar(유종/정렬) 칩, EmptyState, 지도 말풍선 톤
 - [ ] **유가 뉴스** (`NewsPage`/`NewsCard`) — 동일 카드 언어·여백 통일
 
