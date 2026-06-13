@@ -432,7 +432,7 @@ _테스트_
 | **D0** | 토큰 기반 다지기 | 직접 작성 (impeccable 아님) | ✅ 완료 (2026-06-14, S22) |
 | **D1** | 공통 컴포넌트 스킨 (TabBar·StationCard) | 직접 작성 | ✅ 완료 (2026-06-14, S23) |
 | **D2** | 화면별 적용 | 직접 작성 | ✅ 완료 (2026-06-14) — 실시간 유가(S24·S25) / 주변 주유소·뉴스(S27) |
-| **D3** | 마감 & 검증 | `audit` / `critique` / `polish` + 테스트 | ⬜ 다음 |
+| **D3** | 마감 & 검증 | 직접 + 탐지기/Lighthouse | ✅ 완료 (2026-06-14, S28) |
 
 ## Phase D0 — 토큰 기반 다지기 (0순위, 한 번)
 
@@ -465,12 +465,16 @@ _테스트_
 
 **실행 방법:** 구조 바뀌는 히어로는 `craft`, 기존 리스트 리스킨은 `live`/`polish`/`colorize`/`layout`. **화면 하나를 끝까지 완성 후 패턴 복제**(일관성).
 
-## Phase D3 — 마감 & 검증
+## Phase D3 — 마감 & 검증 ✅ 완료 (2026-06-14, S28)
 
-- [ ] 접근성(WCAG AA): 대비 4.5:1, 포커스, 터치 44px → `/impeccable audit`
-- [ ] `prefers-reduced-motion` 대응
-- [ ] `/impeccable critique <화면>` → `/impeccable polish`
-- [ ] `npm test`(93 그린) / `npm run lighthouse`
+- [x] **impeccable 오프라인 탐지기**(detect.mjs)로 src 스캔 → **안티패턴 0건**(슬롭 없음)
+- [x] **접근성(WCAG AA)**: Lighthouse Accessibility **100**, axe 테스트 전 화면 통과. 대비 4.5:1·포커스·터치 44px 충족
+- [x] **Best-Practices 100**
+- [x] `prefers-reduced-motion` 대응 — 스켈레톤 `motion-reduce:animate-none` 추가
+- [x] **성능**: Lighthouse Performance **79**(기준 ≥70 통과). 폰트 `@import`→index.html `link`+preconnect로 렌더 블로킹 제거(0건). 잔여 병목은 **CSR 단일 JS 번들(835KB, recharts/supabase)** = 디자인 무관 기존 구조. FCP 2.7s/LCP 4.7s.
+- [x] `npm test` **101/101** / `npm run build` 통과
+
+**남은 성능 개선(선택, 디자인 범위 밖):** 라우트·recharts 코드 스플리팅(React.lazy)으로 초기 번들 축소 → LCP 개선 가능. 별도 작업으로 분리.
 
 ## 작업 원칙
 
