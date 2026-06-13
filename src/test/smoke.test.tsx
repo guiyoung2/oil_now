@@ -17,6 +17,6 @@ beforeEach(() => {
 test('앱 첫 화면 — 실시간 유가 대시보드 표시', async () => {
   render(<App />)
   await waitFor(() => {
-    expect(screen.getByText('전국 평균가')).toBeInTheDocument()
+    expect(screen.getByText('전국 평균')).toBeInTheDocument()
   })
 })

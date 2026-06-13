@@ -431,7 +431,7 @@ _테스트_
 |-------|------|-----------|------|
 | **D0** | 토큰 기반 다지기 | 직접 작성 (impeccable 아님) | ✅ 완료 (2026-06-14, S22) |
 | **D1** | 공통 컴포넌트 스킨 (TabBar·StationCard) | 직접 작성 | ✅ 완료 (2026-06-14, S23) |
-| **D2** | 화면별 적용 | `craft` / `live` / `colorize` | ⬜ 다음 |
+| **D2** | 화면별 적용 | 직접 작성 | 🔶 진행 중 — 실시간 유가 ✅(S24) / 주변 주유소·뉴스 ⬜ |
 | **D3** | 마감 & 검증 | `audit` / `critique` / `polish` + 테스트 | ⬜ |
 
 ## Phase D0 — 토큰 기반 다지기 (0순위, 한 번)
@@ -455,9 +455,11 @@ _테스트_
 
 ## Phase D2 — 화면별 적용
 
-- [ ] **실시간 유가** (`PricesPage`/`AvgPriceCard`/`PriceTrendChart`) — 전국 평균 히어로 카드(그린) + 유종 칩 + recharts 라인 그린화
-- [ ] **주변 주유소** (`HomePage`/`KakaoMap`/`StationList`) — 둥근 카드 가상 스크롤 리스트 + 최저가 배지
+- [x] **실시간 유가** (`PricesPage`/`AvgPriceCard`/`PriceTrendChart`) — 전국 평균 **그린 히어로 카드(휘발유)** + 보조 카드(경유·LPG) + 월 선택(연한 그린 선택) + recharts **그린 area 차트** (2026-06-14, S24). 동일 카드 3개 나열 → 1히어로+2보조로 재구성(impeccable "동일 카드 그리드" 회피)
+- [ ] **주변 주유소** (`HomePage`/`FilterBar`/`KakaoMap`) — StationCard는 D1 완료. 남은 것: FilterBar(유종/정렬) 칩, EmptyState, 지도 말풍선 톤
 - [ ] **유가 뉴스** (`NewsPage`/`NewsCard`) — 동일 카드 언어·여백 통일
+
+**AA 메모(D2):** 흰 텍스트를 밝은 그린 `#16B364`에 올리면 2.74:1로 AA 미달 → 히어로는 진한 그린 그라데이션(`from-primary-deep to-primary-700`, 흰 텍스트 통과), 델타는 흰 pill+red-700/blue-600, 월 선택은 연한 그린(`bg-primary-50 text-primary-700`) 선택 패턴 사용.
 
 **실행 방법:** 구조 바뀌는 히어로는 `craft`, 기존 리스트 리스킨은 `live`/`polish`/`colorize`/`layout`. **화면 하나를 끝까지 완성 후 패턴 복제**(일관성).
 

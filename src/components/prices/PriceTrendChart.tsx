@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts'
+import { AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts'
 import type { PriceTrendPoint } from '../../types/avgPrice'
 
 interface Props {
@@ -32,12 +32,18 @@ export function PriceTrendChart({ data }: Props) {
       style={{ width: '100%', height: HEIGHT }}
     >
       {width > 0 && (
-        <LineChart
+        <AreaChart
           width={width}
           height={HEIGHT}
           data={data}
           margin={{ top: 8, right: 16, bottom: 8, left: 0 }}
         >
+          <defs>
+            <linearGradient id="priceFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#16b364" stopOpacity={0.25} />
+              <stop offset="100%" stopColor="#16b364" stopOpacity={0} />
+            </linearGradient>
+          </defs>
           <XAxis
             dataKey="date"
             tickFormatter={(d: string) => {
@@ -48,14 +54,15 @@ export function PriceTrendChart({ data }: Props) {
           />
           <YAxis domain={['dataMin - 10', 'dataMax + 10']} width={44} fontSize={11} />
           <Tooltip />
-          <Line
+          <Area
             type="monotone"
             dataKey="price"
-            stroke="#2563eb"
-            strokeWidth={2}
+            stroke="#16b364"
+            strokeWidth={2.5}
+            fill="url(#priceFill)"
             dot={false}
           />
-        </LineChart>
+        </AreaChart>
       )}
     </div>
   )
