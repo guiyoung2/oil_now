@@ -8,17 +8,17 @@ const TABS = [
 
 export function TabBar() {
   return (
-    <nav className="flex border-b bg-white shrink-0" aria-label="주요 메뉴">
+    <nav className="flex border-b border-line bg-white shrink-0" aria-label="주요 메뉴">
       {TABS.map((tab) => (
         <NavLink
           key={tab.to}
           to={tab.to}
           end
           className={({ isActive }) =>
-            `flex flex-1 items-center justify-center min-h-[44px] text-sm font-medium ${
+            `flex flex-1 items-center justify-center min-h-[44px] text-sm font-semibold border-b-2 transition-colors ${
               isActive
-                ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-500'
+                ? 'text-ink border-primary'
+                : 'text-sub border-transparent'
             }`
           }
         >

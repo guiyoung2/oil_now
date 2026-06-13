@@ -430,8 +430,8 @@ _테스트_
 | Phase | 작업 | 실행 방법 | 상태 |
 |-------|------|-----------|------|
 | **D0** | 토큰 기반 다지기 | 직접 작성 (impeccable 아님) | ✅ 완료 (2026-06-14, S22) |
-| **D1** | 공통 컴포넌트 스킨 | `live` / `polish` | ⬜ 다음 |
-| **D2** | 화면별 적용 | `craft` / `live` / `colorize` | ⬜ |
+| **D1** | 공통 컴포넌트 스킨 (TabBar·StationCard) | 직접 작성 | ✅ 완료 (2026-06-14, S23) |
+| **D2** | 화면별 적용 | `craft` / `live` / `colorize` | ⬜ 다음 |
 | **D3** | 마감 & 검증 | `audit` / `critique` / `polish` + 테스트 | ⬜ |
 
 ## Phase D0 — 토큰 기반 다지기 (0순위, 한 번)
@@ -446,11 +446,12 @@ _테스트_
 
 ## Phase D1 — 공통 컴포넌트 스킨
 
-- [ ] `TabBar.tsx` — 파랑 → 잉크 텍스트 + 하단 그린 인디케이터
-- [ ] `StationCard.tsx` — 평면 → 둥근 카드(18px)+은은한 그림자, 최저가 그린, 전일대비 ▲빨강/▼파랑
-- [ ] 칩·배지·버튼 프리미티브 — DESIGN.md 컴포넌트 토큰대로
+- [x] `TabBar.tsx` — 파랑 → 잉크 텍스트 + 하단 그린 인디케이터, 비활성 `text-sub`(AA 대비) (2026-06-14)
+- [x] `StationCard.tsx` — 평면 → 둥근 카드(`rounded-lg` 18px)+은은한 그림자, 최저가 `text-primary-deep` (2026-06-14)
+- [x] `StationList` — 배경 `bg-surface` + `estimateSize` 64→76(카드 간격 12px) + 좌우 인셋 (2026-06-14)
+- [ ] 칩·배지·버튼 프리미티브 → D2 화면 작업 시 함께 (전일대비 ▲빨강/▼파랑은 상세/히어로에서)
 
-**실행 방법:** `npm run dev` 후 `/impeccable live`(요소 클릭 변형) 또는 `/impeccable polish StationCard`.
+**메모:** 최저가 색이 그린으로 바뀌어 `StationCard.test`·`StationList.test`의 `text-blue-600` 단언을 `text-primary-deep`로 갱신. 비활성 탭/메타 텍스트는 DESIGN.md `muted(#9A9A9E, 2.8:1)`가 AA 미달이라 `sub(#6B7280, 4.6:1)` 사용(Don'ts "뮤트 그레이 본문 금지"와 일치).
 
 ## Phase D2 — 화면별 적용
 

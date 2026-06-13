@@ -32,9 +32,9 @@ describe('StationCard', () => {
     expect(screen.getByText('—')).toBeInTheDocument()
   })
 
-  test('isLowest=true → 가격에 text-blue-600 클래스', () => {
+  test('isLowest=true → 가격에 text-primary-deep 클래스', () => {
     render(<StationCard station={station} isLowest={true} onClick={() => {}} fuelType="gasoline_diesel" />)
-    expect(screen.getByText(/1,680원/)).toHaveClass('text-blue-600')
+    expect(screen.getByText(/1,680원/)).toHaveClass('text-primary-deep')
   })
 
   test('셀프 주유소 표시', () => {
@@ -63,9 +63,9 @@ describe('StationCard', () => {
     expect(screen.queryByText('경유')).not.toBeInTheDocument()
   })
 
-  test('gasoline_diesel 모드에서 isLowest → 휘발유 가격에 text-blue-600', () => {
+  test('gasoline_diesel 모드에서 isLowest → 휘발유 가격에 text-primary-deep', () => {
     render(<StationCard station={station} isLowest={true} onClick={() => {}} fuelType="gasoline_diesel" />)
     const gasolinePrice = screen.getByText('1,680원')
-    expect(gasolinePrice).toHaveClass('text-blue-600')
+    expect(gasolinePrice).toHaveClass('text-primary-deep')
   })
 })

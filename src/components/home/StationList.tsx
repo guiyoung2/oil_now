@@ -16,7 +16,7 @@ export function StationList({ stations, onStationClick, fuelType }: Props) {
   const virtualizer = useVirtualizer({
     count: stations.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 64,
+    estimateSize: () => 76,
   })
 
   if (stations.length === 0) return <EmptyState />
@@ -25,13 +25,14 @@ export function StationList({ stations, onStationClick, fuelType }: Props) {
   const lowestPrice = prices.length > 0 ? Math.min(...prices) : null
 
   return (
-    <div ref={parentRef} className="overflow-auto flex-1">
+    <div ref={parentRef} className="overflow-auto flex-1 bg-surface">
       <div style={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
         {virtualizer.getVirtualItems().map((item) => {
           const station = stations[item.index]
           return (
             <div
               key={item.key}
+              className="px-3"
               style={{ position: 'absolute', top: item.start, left: 0, right: 0 }}
             >
               <StationCard

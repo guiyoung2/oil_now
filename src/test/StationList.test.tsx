@@ -49,9 +49,9 @@ describe('StationList', () => {
   test('최저가 주유소 isLowest=true 전달', () => {
     const stations = [makeStation('001', 1680, 300), makeStation('002', 1620, 500)]
     render(<StationList stations={stations} onStationClick={() => {}} fuelType="gasoline_diesel" />)
-    // 가격 1620원 카드에 text-blue-600 클래스
+    // 가격 1620원 카드에 text-primary-deep 클래스
     const prices = screen.getAllByText(/원/)
     const lowestPriceEl = prices.find((el) => el.textContent === '1,620원')
-    expect(lowestPriceEl).toHaveClass('text-blue-600')
+    expect(lowestPriceEl).toHaveClass('text-primary-deep')
   })
 })
