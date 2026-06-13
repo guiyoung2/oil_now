@@ -11,6 +11,7 @@
 |---|------|----------|-------|------|------|
 | 17 | `pipeline` | Phase 2-A | minor | ✅ 해소 | `collect-regional-avg` pg_cron 스케줄 활성화 완료(2026-06-12). 사용자가 pg_cron 확장 활성화 후 Supabase MCP로 `cron_collect_regional_avg` migration 재적용. `collect-regional-avg-daily` 잡 등록(`30 1 * * *`, 매일 10:30 KST). |
 | 18 | `pipeline` | Phase 2-B S18 | note | ✅ 해소 | Deno 런타임에 `DOMParser` 미제공. `parseNews.ts` v1(DOMParser 기반)을 정규식 기반 XML 파싱으로 교체. Vitest(jsdom)와 Deno 모두 동작. |
+| 19 | `pipeline` | 2026-06-13 | critical | ✅ 해소(S21) | pg_cron Vault 시크릿 미등록으로 자동 수집 전량 실패. `functions_url`·`service_role_key` 모두 미등록 상태여서 `net.http_post` null URL 오류 발생. MCP로 두 시크릿 등록 완료. `collect-regional-avg` v3(avgRecentPrice.do+avgAllPrice.do 조합)으로 교체 배포 + 6/6~6/13 40행 백필. |
 
 | 1 | `schema` | 계획 감리 | minor | ✅ 결정 | `price_snapshots.fuel_type` → `TEXT` 타입 채택. API 확인 전 안전한 선택. 숫자 코드 확인 시 마이그레이션으로 변경. |
 | 2 | `schema` | 계획 감리 | minor | ✅ 결정 | `stations.updated_at` 자동 갱신 트리거 추가. Supabase `moddatetime` 확장 사용. |

@@ -405,5 +405,5 @@ _테스트_
 - 개발 모드(npm run dev): MSW가 `around-stations`(주변 주유소)·`regional_avg`(평균가) 요청을 가로채 fixture 반환
 - 프로덕션 빌드 / Supabase 직접 호출: Opinet 실데이터(`around-stations` Edge Function) + DB 실데이터(`regional_avg`)
 - `collect-prices`: pg_cron 미적용, 수동 트리거 가능
-- `collect-regional-avg`: 배포 완료(v1), 오늘 5개 유종 전국 평균가 적재. pg_cron 스케줄 활성화 완료(`collect-regional-avg-daily`, 매일 10:30 KST)
+- `collect-regional-avg`: 배포 완료(v3, 2026-06-13). avgRecentPrice.do(7일)+avgAllPrice.do(diff) 조합. pg_cron Vault 시크릿 등록 완료 → 매일 10:30 KST 자동 실행. regional_avg 6/6~6/13 40행 적재.
 - `collect-news`: 배포 완료(v2), 실호출 rows=20 status=success. pg_cron `0 0,12 * * *` 스케줄 적용(cron_collect_news migration)
