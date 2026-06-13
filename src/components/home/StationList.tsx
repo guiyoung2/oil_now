@@ -25,7 +25,7 @@ export function StationList({ stations, onStationClick, fuelType }: Props) {
   const lowestPrice = prices.length > 0 ? Math.min(...prices) : null
 
   return (
-    <div ref={parentRef} className="overflow-auto flex-1 bg-surface">
+    <div ref={parentRef} className="overflow-auto flex-1 bg-sheet">
       <div style={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
         {virtualizer.getVirtualItems().map((item) => {
           const station = stations[item.index]

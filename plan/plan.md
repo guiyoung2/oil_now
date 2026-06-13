@@ -446,7 +446,8 @@ _테스트_
 
 ## Phase D1 — 공통 컴포넌트 스킨
 
-- [x] `TabBar.tsx` — 파랑 → 잉크 텍스트 + 하단 그린 인디케이터, 비활성 `text-sub`(AA 대비) (2026-06-14)
+- [x] `TabBar.tsx` — (S23 밑줄) → **필(pill) 탭으로 재디자인**(S26): 활성 `bg-primary-700 text-white`, 비활성 `bg-surface text-sub`. + `MainLayout`에 **브랜드 헤더("오일나우" 로고)** 추가 (2026-06-14)
+- [x] **배경 토큰화** — `@theme`에 `--color-sheet:#eff5f1` 추가, PricesPage·StationList 배경을 `bg-sheet`로 일관화 (2026-06-14, S26)
 - [x] `StationCard.tsx` — 평면 → 둥근 카드(`rounded-lg` 18px)+은은한 그림자, 최저가 `text-primary-deep` (2026-06-14)
 - [x] `StationList` — 배경 `bg-surface` + `estimateSize` 64→76(카드 간격 12px) + 좌우 인셋 (2026-06-14)
 - [ ] 칩·배지·버튼 프리미티브 → D2 화면 작업 시 함께 (전일대비 ▲빨강/▼파랑은 상세/히어로에서)

@@ -42,7 +42,7 @@ export function PricesPage() {
 
   if (isLoading || !data) {
     return (
-      <div className="flex flex-1 items-center justify-center bg-surface">
+      <div className="flex flex-1 items-center justify-center bg-sheet">
         <p className="text-sm text-sub">불러오는 중...</p>
       </div>
     )
@@ -52,7 +52,7 @@ export function PricesPage() {
   const restFuels = data.avgPrices.filter((ap) => ap.fuelType !== 'gasoline')
 
   return (
-    <div className="flex-1 overflow-auto bg-[#eff5f1]">
+    <div className="flex-1 overflow-auto bg-sheet">
       <h1 className="sr-only">실시간 유가</h1>
 
       {/* 그린 헤더 존 — 전국 평균(휘발유) */}
@@ -80,7 +80,7 @@ export function PricesPage() {
       </header>
 
       {/* 옅은 그린 틴트 시트 + 흰 카드 */}
-      <div className="-mt-5 rounded-t-[20px] bg-[#eff5f1] px-4 pt-5 pb-6">
+      <div className="-mt-5 rounded-t-[20px] bg-sheet px-4 pt-5 pb-6">
         {restFuels.length > 0 && (
           <div className="flex gap-3">
             {restFuels.map((ap) => (
