@@ -1,6 +1,6 @@
 // @ts-nocheck — Deno 런타임 전용 파일, tsconfig.app.json 범위 외
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { parseAvgPriceResponse } from "../_shared/parseAvgPrice.ts";
+import { parseAvgPriceResponse, parseRecentPriceResponse } from "../_shared/parseAvgPrice.ts";
 
 Deno.serve(async (_req: Request) => {
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
@@ -31,28 +31,56 @@ Deno.serve(async (_req: Request) => {
   let totalRows = 0;
   const failures: string[] = [];
 
+  // Step 1: avgRecentPrice.do — 최근 7일 일별 평균가 (diff=0)
+  // 매일 실행 시 7일치가 항상 upsert되어 누락 없이 누적됨
   try {
-    const url = new URL("https://www.opinet.co.kr/api/avgAllPrice.do");
-    url.searchParams.set("code", apiKey);
-    url.searchParams.set("out", "json");
+    const recentUrl = new URL("https://www.opinet.co.kr/api/avgRecentPrice.do");
+    recentUrl.searchParams.set("code", apiKey);
+    recentUrl.searchParams.set("out", "json");
 
-    const res = await fetch(url.toString());
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
+    const recentRes = await fetch(recentUrl.toString());
+    if (!recentRes.ok) throw new Error(`HTTP ${recentRes.status}`);
+    const recentJson = await recentRes.json();
 
-    const rows = parseAvgPriceResponse(json);
-
-    if (rows.length === 0) {
-      failures.push("avgAllPrice.do 응답에 유효한 유종 없음");
+    const recentRows = parseRecentPriceResponse(recentJson);
+    if (recentRows.length === 0) {
+      failures.push("avgRecentPrice.do — 유효 유종 없음");
     } else {
       const { error: upsertErr } = await supabase
         .from("regional_avg")
-        .upsert(rows, { onConflict: "date,fuel_type,region" });
-
+        .upsert(recentRows, { onConflict: "date,fuel_type,region" });
       if (upsertErr) {
-        failures.push(`regional_avg upsert — ${upsertErr.message}`);
+        failures.push(`avgRecentPrice.do upsert — ${upsertErr.message}`);
       } else {
-        totalRows = rows.length;
+        totalRows += recentRows.length;
+      }
+    }
+  } catch (err) {
+    failures.push(`avgRecentPrice.do fetch — ${err instanceof Error ? err.message : String(err)}`);
+  }
+
+  // Step 2: avgAllPrice.do — 최신 공시일 가격 + 전일 대비 diff
+  // Step 1의 최신 날짜 행을 덮어써서 diff 값을 정확하게 유지
+  try {
+    const allUrl = new URL("https://www.opinet.co.kr/api/avgAllPrice.do");
+    allUrl.searchParams.set("code", apiKey);
+    allUrl.searchParams.set("out", "json");
+
+    const allRes = await fetch(allUrl.toString());
+    if (!allRes.ok) throw new Error(`HTTP ${allRes.status}`);
+    const allJson = await allRes.json();
+
+    const allRows = parseAvgPriceResponse(allJson);
+    if (allRows.length === 0) {
+      failures.push("avgAllPrice.do — 유효 유종 없음");
+    } else {
+      const { error: upsertErr } = await supabase
+        .from("regional_avg")
+        .upsert(allRows, { onConflict: "date,fuel_type,region" });
+      if (upsertErr) {
+        failures.push(`avgAllPrice.do upsert — ${upsertErr.message}`);
+      } else {
+        totalRows += allRows.length;
       }
     }
   } catch (err) {

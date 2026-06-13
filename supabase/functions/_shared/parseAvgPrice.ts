@@ -14,6 +14,7 @@ const FUEL_MAP: Record<string, string> = {
   C004: 'kerosene',
 }
 
+// avgAllPrice.do 응답 형태 (TRADE_DT + DIFF 포함)
 interface OpinetAvgRaw {
   TRADE_DT: string
   PRODCD: string
@@ -44,5 +45,29 @@ export function parseAvgPriceResponse(
         diff: Number(item.DIFF),
       },
     ]
+  })
+}
+
+// avgRecentPrice.do 응답 형태 (DATE 필드, DIFF 없음)
+interface OpinetRecentRaw {
+  DATE: string         // YYYYMMDD
+  PRODCD: string
+  PRICE: string | number
+}
+
+interface OpinetRecentResponse {
+  RESULT: { OIL: OpinetRecentRaw[] }
+}
+
+export function parseRecentPriceResponse(
+  json: OpinetRecentResponse,
+  region = '전국',
+): RegionalAvgRow[] {
+  return (json?.RESULT?.OIL ?? []).flatMap((item) => {
+    const fuelType = FUEL_MAP[item.PRODCD]
+    if (!fuelType) return []
+    const dt = String(item.DATE)
+    const date = `${dt.slice(0, 4)}-${dt.slice(4, 6)}-${dt.slice(6, 8)}`
+    return [{ date, fuel_type: fuelType, region, avg_price: Number(item.PRICE), diff: 0 }]
   })
 }
