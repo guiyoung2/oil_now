@@ -18,11 +18,11 @@ const FUEL_LABELS: Record<AvgFuelType, string> = {
   kerosene: '등유',
 }
 
-const TODAY = new Date().toLocaleDateString('ko-KR', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-})
+// 'YYYY-MM-DD' → '2026년 6월 14일' (시간대 영향 없이 문자열에서 직접 변환)
+function formatKoreanDate(isoDate: string): string {
+  const [y, m, d] = isoDate.split('-')
+  return `${y}년 ${Number(m)}월 ${Number(d)}일`
+}
 
 function heroDeltaText(delta: number): string {
   if (delta > 0) return `어제보다 ${delta}원 올랐어요`
@@ -50,7 +50,11 @@ export function PricesPage() {
 
       {/* 그린 헤더 존 — 전국 평균(휘발유) */}
       <header className="bg-gradient-to-br from-primary-deep to-primary-700 px-4 pt-4 pb-8 text-white">
-        <div className="text-xs text-white/80">{TODAY} 기준</div>
+        {data.latestDate && (
+          <div className="text-xs text-white/80">
+            {formatKoreanDate(data.latestDate)} 기준
+          </div>
+        )}
         {heroFuel && (
           <div className="mt-2.5">
             <div className="flex items-baseline gap-1.5 text-sm font-bold">

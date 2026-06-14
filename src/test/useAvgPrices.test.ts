@@ -56,6 +56,13 @@ describe('useAvgPrices Supabase 연동', () => {
     expect(trend[1].price).toBe(2009.66)
   })
 
+  it('latestDate — 가장 최신 공시일 반환', async () => {
+    const { result } = renderHook(() => useAvgPrices(), { wrapper: createWrapper() })
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+    expect(result.current.data!.latestDate).toBe('2026-06-12')
+  })
+
   it('isLoading 초기 true → 데이터 수신 후 false', async () => {
     const { result } = renderHook(() => useAvgPrices(), { wrapper: createWrapper() })
     expect(result.current.isLoading).toBe(true)

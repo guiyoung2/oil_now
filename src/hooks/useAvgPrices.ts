@@ -5,6 +5,7 @@ import type { AvgPrice, PriceTrendPoint } from '../types/avgPrice'
 interface AvgPricesData {
   avgPrices: AvgPrice[]
   trend: PriceTrendPoint[]
+  latestDate: string // 평균가의 실제 공시 기준일 'YYYY-MM-DD' (없으면 '')
 }
 
 interface RegionalAvgRow {
@@ -52,7 +53,7 @@ async function fetchAvgPrices(): Promise<AvgPricesData> {
     .map((r) => ({ date: r.date, price: Number(r.avg_price) }))
     .slice(-TREND_DAYS)
 
-  return { avgPrices, trend }
+  return { avgPrices, trend, latestDate }
 }
 
 export function useAvgPrices() {
